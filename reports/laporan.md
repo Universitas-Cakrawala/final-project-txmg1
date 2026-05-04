@@ -27,7 +27,7 @@ Penelitian ini menggunakan alur sistematis sebagai berikut:
 5.  **Klasifikasi**: Melatih model Decision Tree, Random Forest, dan XGBoost dengan *Class Weighting*.
 6.  **Evaluasi**: Menggunakan *Confusion Matrix* dan metrik Macro F1-Score.
 
-![Metode Penelitian](../results/figures/interpretation/sentiment_distribution.png)
+![Metode Penelitian](../results/figures/eda/sentiment_distribution.png)
 *Gambar 1: Alur Penyeimbangan Dataset (Undersampling).*
 
 ## IV. HASIL DAN PEMBAHASAN
@@ -51,8 +51,8 @@ Analisis mendalam terhadap ulasan negatif menggunakan LDA mengidentifikasi 5 top
 4.  **Stabilitas (Force Close)**: Bug teknis pada aplikasi.
 5.  **Pendaftaran NPWP**: Masalah pada fitur registrasi baru.
 
-![LDA Clusters](../results/figures/interpretation/topic_model_clusters.png)
-*Gambar 3: Visualisasi Klaster Topik Keluhan Negatif.*
+![LDA Coherence](../results/figures/interpretation/lda_coherence.png)
+*Gambar 3: Grafik Coherence Score untuk penentuan jumlah topik optimal (LDA).*
 
 ## V. KESIMPULAN
 Penelitian ini membuktikan bahwa penggunaan **GloVe Embeddings** dikombinasikan dengan **XGBoost** mampu menghasilkan klasifikasi sentimen yang jauh lebih presisi dan adil (Macro F1 71,4%) pada dataset yang diseimbangkan. Penurunan akurasi dari 91% (data timpang) ke 71% (data seimbang) merupakan indikator bahwa model telah berhasil mengatasi bias kelas mayoritas. Rekomendasi utama bagi pengembang adalah perbaikan mendesak pada infrastruktur pengiriman OTP untuk meningkatkan kepuasan pengguna secara signifikan.
