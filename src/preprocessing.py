@@ -264,7 +264,12 @@ def _load_stemmer():
     try:
         from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
         factory = StemmerFactory()
-        return factory.createStemmer()
+        if hasattr(factory, 'create_stemmer'):
+            return factory.create_stemmer()
+        if hasattr(factory, 'createStemmer'):
+            return factory.createStemmer()
+        print("⚠️  API StemmerFactory Sastrawi tidak dikenali. Stemming dinonaktifkan.")
+        return None
     except ImportError:
         print("⚠️  Sastrawi tidak terinstall. Stemming dinonaktifkan.")
         print("   Install: pip install Sastrawi")

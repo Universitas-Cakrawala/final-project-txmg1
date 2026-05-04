@@ -259,7 +259,7 @@ class GloVeExtractor(BaseExtractor):
     sebagai pengganti GloVe karena tidak ada GloVe pre-trained untuk Bahasa Indonesia.
     """
 
-    def __init__(self, vectors_path: str = "data/embeddings/cc.id.300.vec",
+    def __init__(self, vectors_path: str = "data/processed/cc.id.300.vec",
                  dim: int = 300,
                  max_vocab: int = 200000):
         super().__init__(name='GloVe')
@@ -292,6 +292,11 @@ class GloVeExtractor(BaseExtractor):
     def _load_vectors(self):
         """Load word vectors dari file .vec (format teks)."""
         self.word_vectors = {}
+        if not os.path.exists(self.vectors_path):
+            raise FileNotFoundError(
+                f"File vectors tidak ditemukan: {self.vectors_path}. "
+                "Unduh dulu dengan `python scripts/download_cc_id_300_vec.py`."
+            )
         with open(self.vectors_path, 'r', encoding='utf-8', errors='ignore') as f:
             # Skip header line (jika ada)
             first_line = f.readline().strip().split()
