@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Project Data (Large or Generated)
+data/processed/
+data/embeddings/
+!data/embeddings/.gitkeep
+
+# Experiment Results (Generated)
+results/feature_matrices/
+results/figures/
+!results/feature_matrices/.gitkeep
+!results/figures/.gitkeep
+
+# IDEs
+.idea/
+.vscode/
+.DS_Store
