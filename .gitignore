@@ -8,21 +8,34 @@ env/
 .env
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 
 # Project Data (Large or Generated)
 data/processed/
 data/embeddings/
+!data/processed/.gitkeep
 !data/embeddings/.gitkeep
 
 # Experiment Results (Generated)
 results/feature_matrices/
-results/figures/
+!results/figures/
+!results/comparison_table.csv
 !results/feature_matrices/.gitkeep
 !results/figures/.gitkeep
+
+# Pre-trained Models (Large)
+*.bin
+*.vec
+*.model
+*.pkl
 
 # IDEs
 .idea/
 .vscode/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
