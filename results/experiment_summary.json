@@ -1,0 +1,34 @@
+{
+  "dataset": {
+    "total_raw": 8099,
+    "total_balanced": 609,
+    "samples_per_class": 203,
+    "classes": [
+      "Negatif",
+      "Netral",
+      "Positif"
+    ]
+  },
+  "best_model": {
+    "strategy": "SMOTE",
+    "feature_extractor": "Word2Vec",
+    "model": "Random Forest",
+    "macro_f1": 0.7626,
+    "weighted_f1": 0.7623,
+    "accuracy": 0.7623,
+    "roc_auc": 0.9107,
+    "recall_negatif": 0.75,
+    "recall_netral": 0.8293,
+    "recall_positif": 0.7073
+  },
+  "baseline_best": {
+    "model": "Random Forest",
+    "feature_extractor": "Word2Vec",
+    "macro_f1": 0.7544,
+    "accuracy": 0.7541
+  },
+  "improvement": {
+    "macro_f1_gain": 0.008199999999999985,
+    "accuracy_gain": 0.008199999999999985
+  }
+}

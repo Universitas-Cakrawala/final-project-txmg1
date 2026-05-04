@@ -1,0 +1,16 @@
+,strategy,feature_extractor,model,weighted_f1,macro_f1,roc_auc,accuracy,recall_negatif,recall_netral,recall_positif,f1_negatif,f1_netral,f1_positif
+1,SMOTE,Word2Vec,Random Forest,0.7623,0.7626,0.9107,0.7623,0.75,0.8293,0.7073,0.7895,0.764,0.7342
+2,Baseline (No Balance),Word2Vec,Random Forest,0.7542,0.7544,0.9099,0.7541,0.725,0.8293,0.7073,0.7733,0.7556,0.7342
+3,Class Weight Balanced,Word2Vec,Random Forest,0.7462,0.7464,0.8968,0.7459,0.725,0.7805,0.7317,0.7632,0.7442,0.7317
+4,Random Undersampling,Word2Vec,Random Forest,0.7458,0.7458,0.9064,0.7459,0.725,0.7805,0.7317,0.7436,0.7529,0.7407
+5,Random Undersampling,Word2Vec,XGBoost,0.7298,0.7297,0.9046,0.7295,0.675,0.7805,0.7317,0.72,0.7191,0.75
+6,SMOTE,Word2Vec,XGBoost,0.7293,0.7293,0.9039,0.7295,0.7,0.7805,0.7073,0.7273,0.7356,0.725
+7,Baseline (No Balance),Word2Vec,XGBoost,0.7289,0.7289,0.911,0.7295,0.675,0.8049,0.7073,0.72,0.7416,0.725
+8,Class Weight Balanced,Word2Vec,XGBoost,0.7289,0.7289,0.911,0.7295,0.675,0.8049,0.7073,0.72,0.7416,0.725
+9,Baseline (No Balance),Word2Vec,Decision Tree,0.7041,0.7038,0.7978,0.7049,0.625,0.7561,0.7317,0.6579,0.7126,0.7407
+10,SMOTE,Word2Vec,Decision Tree,0.7041,0.7038,0.7978,0.7049,0.625,0.7561,0.7317,0.6579,0.7126,0.7407
+11,Class Weight Balanced,Word2Vec,Decision Tree,0.7041,0.7038,0.7978,0.7049,0.625,0.7561,0.7317,0.6579,0.7126,0.7407
+12,Random Undersampling,Word2Vec,Decision Tree,0.6944,0.6939,0.8055,0.6967,0.575,0.7805,0.7317,0.6389,0.7111,0.7317
+13,SMOTEENN,Word2Vec,Decision Tree,0.5478,0.548,0.656,0.541,0.6,0.5122,0.5122,0.5647,0.4615,0.6176
+14,SMOTEENN,Word2Vec,Random Forest,0.5459,0.5467,0.7801,0.5656,0.875,0.3171,0.5122,0.6422,0.4062,0.5915
+15,SMOTEENN,Word2Vec,XGBoost,0.5199,0.5209,0.7663,0.541,0.85,0.2683,0.5122,0.6476,0.3235,0.5915

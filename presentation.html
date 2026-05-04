@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi UAS Text Mining — Analisis Sentimen CoreTax/M-Pajak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 60px 80px;
+            position: relative;
+            overflow-y: auto;
+        }
+        .slide.active { display: flex; flex-direction: column; justify-content: center; }
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 14px;
+            color: #666;
+        }
+        h1 { font-size: 2.8em; margin-bottom: 20px; line-height: 1.2; }
+        h2 { font-size: 2.2em; margin-bottom: 30px; color: #4fc3f7; }
+        h3 { font-size: 1.5em; margin-bottom: 15px; color: #81d4fa; }
+        p, li { font-size: 1.15em; line-height: 1.7; margin-bottom: 10px; }
+        ul { padding-left: 30px; }
+        li { margin-bottom: 8px; }
+        .accent { color: #4fc3f7; font-weight: bold; }
+        .highlight { color: #ff7043; font-weight: bold; }
+        .green { color: #66bb6a; font-weight: bold; }
+        .red { color: #ef5350; font-weight: bold; }
+        .yellow { color: #ffd54f; font-weight: bold; }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+        }
+        .title-slide h1 { font-size: 3em; color: #4fc3f7; }
+        .title-slide .subtitle { font-size: 1.4em; color: #90a4ae; margin-top: 20px; }
+        .title-slide .meta { font-size: 1em; color: #607d8b; margin-top: 40px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th { background: #1a1a3e; color: #4fc3f7; font-weight: 600; }
+        tr:hover { background: #1a1a2e; }
+        .best-row { background: #1b3a1b !important; border-left: 4px solid #66bb6a; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+
+        .card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+        .card h3 { margin-top: 0; }
+
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-box .number { font-size: 3em; font-weight: bold; color: #4fc3f7; }
+        .stat-box .label { font-size: 1em; color: #90a4ae; margin-top: 5px; }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(10, 10, 26, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 100;
+            border-top: 1px solid #333;
+        }
+        .nav button {
+            background: #1a1a3e;
+            color: #4fc3f7;
+            border: 1px solid #4fc3f7;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav button:hover { background: #4fc3f7; color: #0a0a1a; }
+        .nav .page-info { color: #666; font-size: 14px; min-width: 80px; text-align: center; }
+
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .flow-step {
+            background: #1a1a3e;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            border: 1px solid #4fc3f7;
+        }
+        .flow-arrow { color: #4fc3f7; font-size: 1.5em; }
+
+        .confusion-matrix {
+            display: inline-grid;
+            grid-template-columns: auto repeat(3, 100px);
+            gap: 4px;
+            margin: 20px 0;
+        }
+        .cm-cell {
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .cm-header { background: #1a1a3e; color: #4fc3f7; }
+        .cm-diag { background: #1b3a1b; color: #66bb6a; }
+        .cm-off { background: #3a1b1b; color: #ef5350; }
+        .cm-label { background: transparent; color: #90a4ae; font-weight: normal; }
+
+        .topic-card {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4fc3f7;
+            margin: 10px 0;
+        }
+        .topic-card .keywords { color: #ffd54f; font-family: monospace; font-size: 0.95em; }
+
+        .rec-table td:first-child { font-size: 1.5em; }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide title-slide active">
+    <h1>Analisis Sentimen Ulasan<br>Aplikasi <span class="accent">CoreTax / M-Pajak</span></h1>
+    <div class="subtitle">Menggunakan Word Embeddings, Machine Learning, dan SMOTE<br>untuk Menangani Class Imbalance</div>
+    <div class="meta">
+        <p>UAS Text Mining — Universitas Cakrawala</p>
+        <p style="margin-top: 10px;">Dataset: 8.099 ulasan dari Google Play Store</p>
+    </div>
+    <div class="slide-number">1 / 12</div>
+</div>
+
+<!-- SLIDE 2: Latar Belakang & Masalah -->
+<div class="slide">
+    <h2>Latar Belakang & Masalah</h2>
+    <div class="grid-2">
+        <div>
+            <h3>Mengapa M-Pajak?</h3>
+            <ul>
+                <li>Aplikasi resmi <span class="accent">Direktorat Jenderal Pajak</span> untuk layanan perpajakan digital</li>
+                <li><span class="highlight">8.099 ulasan</span> di Google Play Store (2021-2026)</li>
+                <li>Ulasan mencerminkan <span class="accent">kepuasan pengguna</span> terhadap layanan publik digital</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Masalah Utama</h3>
+            <div class="card">
+                <p class="red" style="font-size: 1.3em;">Class Imbalance Ekstrem</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 79.8%; background: #ef5350;">Negatif 79,8%</div></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 17%; background: #66bb6a;">Positif 17,0%</div></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 3.2%; background: #ffd54f;">Netral 3,2%</div></div>
+                <p style="margin-top: 15px; font-size: 0.95em; color: #90a4ae;">Model bias ke kelas mayoritas → akurasi tinggi tapi meaningless</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">2 / 12</div>
+</div>
+
+<!-- SLIDE 3: Tujuan & Research Questions -->
+<div class="slide">
+    <h2>Tujuan & Research Questions</h2>
+    <div class="grid-2">
+        <div>
+            <h3>Tujuan Penelitian</h3>
+            <ul>
+                <li>Membangun model klasifikasi sentimen <span class="accent">ternary</span> (Positif/Netral/Negatif)</li>
+                <li>Membandingkan <span class="accent">4 word embeddings</span> dan <span class="accent">3 model ML</span></li>
+                <li>Mengevaluasi efektivitas <span class="highlight">teknik handling class imbalance</span></li>
+                <li>Mengidentifikasi <span class="accent">topik keluhan utama</span> melalui LDA</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Research Questions</h3>
+            <div class="card">
+                <p><span class="accent">RQ1:</span> Word embedding mana yang paling efektif?</p>
+                <p><span class="accent">RQ2:</span> Model ML mana yang paling optimal?</p>
+                <p><span class="highlight">RQ3:</span> Bagaimana dampak SMOTE vs Undersampling vs Class Weight?</p>
+                <p><span class="accent">RQ4:</span> Apa topik keluhan utama pengguna?</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">3 / 12</div>
+</div>
+
+<!-- SLIDE 4: Metodologi -->
+<div class="slide">
+    <h2>Metodologi</h2>
+    <div class="flow">
+        <div class="flow-step">Scraping<br><small>8.099 reviews</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Balancing<br><small>Undersampling 203/class</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Preprocessing<br><small>Sastrawi Stemming</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Feature Extraction<br><small>TF-IDF, W2V, FT</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Ablation Study<br><small>5 strategies</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Model Training<br><small>DT, RF, XGB</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">LDA Topic<br><small>3 topik</small></div>
+    </div>
+
+    <div class="grid-3" style="margin-top: 30px;">
+        <div class="card">
+            <h3>Feature Extractors</h3>
+            <ul>
+                <li><span class="accent">TF-IDF</span> (statistical)</li>
+                <li><span class="accent">Word2Vec</span> (neural, 100D)</li>
+                <li><span class="accent">FastText</span> (subword, 100D)</li>
+                <li>GloVe (cc.id.300.vec — 300D)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Models</h3>
+            <ul>
+                <li><span class="accent">Decision Tree</span></li>
+                <li><span class="accent">Random Forest</span></li>
+                <li><span class="accent">XGBoost</span></li>
+            </ul>
+            <p style="font-size: 0.9em; color: #90a4ae; margin-top: 10px;">Tuning: RandomizedSearchCV, 3-fold CV</p>
+        </div>
+        <div class="card">
+            <h3>Balancing Strategies</h3>
+            <ul>
+                <li>Baseline (no balance)</li>
+                <li><span class="highlight">SMOTE</span></li>
+                <li>Random Undersampling</li>
+                <li>SMOTEENN</li>
+                <li>Class Weight Balanced</li>
+            </ul>
+        </div>
+    </div>
+    <div class="slide-number">4 / 12</div>
+</div>
+
+<!-- SLIDE 5: Preprocessing -->
+<div class="slide">
+    <h2>Preprocessing dengan Sastrawi</h2>
+    <div class="grid-2">
+        <div>
+            <h3>Pipeline NLP Bahasa Indonesia</h3>
+            <table>
+                <tr><th>Tahap</th><th>Contoh</th></tr>
+                <tr><td>Case Folding</td><td>"Aplikasi Bagus" → "aplikasi bagus"</td></tr>
+                <tr><td>Noise Removal</td><td>Hapus URL, emoji, angka</td></tr>
+                <tr><td>Slang Normalization</td><td>"gak" → "tidak", "bgt" → "sangat"</td></tr>
+                <tr><td>Stopword Removal</td><td>Hapus "yang", "di", "dan" (negasi dipertahankan)</td></tr>
+                <tr><td><span class="accent">Stemming (Sastrawi)</span></td><td>"memudahkan" → "mudah"</td></tr>
+            </table>
+        </div>
+        <div>
+            <h3>Contoh Hasil</h3>
+            <div class="card">
+                <p><span class="red">Before:</span> "Aplikasi sampah. nunggu kode verifikasi bagaikan menunggu hari kiamat."</p>
+                <p style="margin-top: 15px;"><span class="green">After:</span> "aplikasi sampah tunggu kode verifikasi bagai tunggu hari kiamat"</p>
+            </div>
+            <div class="card" style="margin-top: 15px;">
+                <p><strong>Stats:</strong></p>
+                <ul>
+                    <li>Rata-rata token: <span class="accent">8,7 kata/review</span></li>
+                    <li>Vocabulary TF-IDF: <span class="accent">1.009 terms</span></li>
+                    <li>Dataset: <span class="accent">609 reviews</span> (203 per kelas)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">5 / 12</div>
+</div>
+
+<!-- SLIDE 6: Baseline Results -->
+<div class="slide">
+    <h2>Hasil Baseline (Tanpa Balancing Tambahan)</h2>
+    <p style="margin-bottom: 20px;">Dataset sudah balanced (203/class). Semua model di-tuning dengan RandomizedSearchCV.</p>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Feature Extractor</th>
+            <th>Model</th>
+            <th>Macro F1</th>
+            <th>Accuracy</th>
+            <th>ROC-AUC</th>
+        </tr>
+        <tr class="best-row">
+            <td>1</td>
+            <td><span class="accent">Word2Vec</span></td>
+            <td><span class="accent">Random Forest</span></td>
+            <td><span class="green">0.7544</span></td>
+            <td>0.7541</td>
+            <td>0.9035</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Word2Vec</td>
+            <td>XGBoost</td>
+            <td>0.7289</td>
+            <td>0.7295</td>
+            <td>0.8760</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>TF-IDF</td>
+            <td>Random Forest</td>
+            <td>0.7266</td>
+            <td>0.7295</td>
+            <td>0.8986</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Word2Vec</td>
+            <td>Decision Tree</td>
+            <td>0.7038</td>
+            <td>0.7049</td>
+            <td>0.8580</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>TF-IDF</td>
+            <td>XGBoost</td>
+            <td>0.6625</td>
+            <td>0.6639</td>
+            <td>0.8398</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>FastText</td>
+            <td>Random Forest</td>
+            <td>0.6307</td>
+            <td>0.6311</td>
+            <td>0.8017</td>
+        </tr>
+    </table>
+    <p style="margin-top: 15px; font-size: 0.95em; color: #90a4ae;">
+        <span class="accent">Key Finding:</span> Word2Vec consistently mengungguli TF-IDF dan FastText. Random Forest adalah model terbaik.
+    </p>
+    <div class="slide-number">6 / 12</div>
+</div>
+
+<!-- SLIDE 7: Ablation Study -->
+<div class="slide">
+    <h2>Ablation Study: Impact of Class Imbalance Handling</h2>
+    <p style="margin-bottom: 20px;">Menggunakan feature <span class="accent">Word2Vec</span> — perbandingan 5 strategi balancing:</p>
+    <table>
+        <tr>
+            <th>Strategy</th>
+            <th>Model</th>
+            <th>Macro F1</th>
+            <th>Accuracy</th>
+            <th>ROC-AUC</th>
+            <th>Recall Neg</th>
+            <th>Recall Neu</th>
+            <th>Recall Pos</th>
+        </tr>
+        <tr class="best-row">
+            <td><span class="highlight">SMOTE</span></td>
+            <td><span class="accent">Random Forest</span></td>
+            <td><span class="green">0.7626</span></td>
+            <td><span class="green">0.7623</span></td>
+            <td><span class="green">0.9107</span></td>
+            <td>0.7805</td>
+            <td>0.7317</td>
+            <td>0.7805</td>
+        </tr>
+        <tr>
+            <td>Baseline</td>
+            <td>Random Forest</td>
+            <td>0.7544</td>
+            <td>0.7541</td>
+            <td>0.9035</td>
+            <td>0.7561</td>
+            <td>0.7073</td>
+            <td>0.8049</td>
+        </tr>
+        <tr>
+            <td>Class Weight</td>
+            <td>Random Forest</td>
+            <td>0.7464</td>
+            <td>0.7459</td>
+            <td>0.9021</td>
+            <td>0.7317</td>
+            <td>0.7073</td>
+            <td>0.8049</td>
+        </tr>
+        <tr>
+            <td>RUS</td>
+            <td>Random Forest</td>
+            <td>0.7458</td>
+            <td>0.7459</td>
+            <td>0.8998</td>
+            <td>0.7561</td>
+            <td>0.6829</td>
+            <td>0.8049</td>
+        </tr>
+        <tr>
+            <td>SMOTEENN</td>
+            <td>Random Forest</td>
+            <td class="red">0.5467</td>
+            <td class="red">0.5656</td>
+            <td class="red">0.7407</td>
+            <td>0.5854</td>
+            <td>0.4146</td>
+            <td>0.6585</td>
+        </tr>
+    </table>
+    <div class="card" style="margin-top: 15px;">
+        <p><span class="green">SMOTE improvement: +0.82% Macro F1</span> vs baseline. Recall Netral naik dari 70.73% → 73.17%.</p>
+        <p style="margin-top: 5px;"><span class="red">SMOTEENN gagal</span> karena mengurangi dataset dari 487 → 140 sampel (terlalu agresif untuk data kecil).</p>
+    </div>
+    <div class="slide-number">7 / 12</div>
+</div>
+
+<!-- SLIDE 8: Confusion Matrix -->
+<div class="slide">
+    <h2>Confusion Matrix — Model Terbaik</h2>
+    <p style="margin-bottom: 20px;"><span class="accent">SMOTE + Random Forest + Word2Vec</span> (Macro F1: 0.7626, AUC: 0.9107)</p>
+
+    <div class="grid-2">
+        <div>
+            <h3>Confusion Matrix</h3>
+            <div class="confusion-matrix">
+                <div class="cm-cell cm-label"></div>
+                <div class="cm-cell cm-header">Pred Neg</div>
+                <div class="cm-cell cm-header">Pred Neu</div>
+                <div class="cm-cell cm-header">Pred Pos</div>
+
+                <div class="cm-cell cm-label">Actual Neg</div>
+                <div class="cm-cell cm-diag">32</div>
+                <div class="cm-cell cm-off">5</div>
+                <div class="cm-cell cm-off">4</div>
+
+                <div class="cm-cell cm-label">Actual Neu</div>
+                <div class="cm-cell cm-off">6</div>
+                <div class="cm-cell cm-diag">30</div>
+                <div class="cm-cell cm-off">5</div>
+
+                <div class="cm-cell cm-label">Actual Pos</div>
+                <div class="cm-cell cm-off">4</div>
+                <div class="cm-cell cm-off">5</div>
+                <div class="cm-cell cm-diag">32</div>
+            </div>
+        </div>
+        <div>
+            <h3>Error Analysis</h3>
+            <div class="card">
+                <p><span class="green">Recall Negatif: 78,05%</span> (32/41 benar)</p>
+                <p><span class="yellow">Recall Netral: 73,17%</span> (30/41 benar) — terendah</p>
+                <p><span class="green">Recall Positif: 78,05%</span> (32/41 benar)</p>
+            </div>
+            <div class="card" style="margin-top: 15px;">
+                <p><strong>Insight:</strong></p>
+                <ul>
+                    <li>Kelas <span class="yellow">Netral</span> paling sering salah klasifikasi</li>
+                    <li>Netral sering dikira <span class="red">Negatif</span> (6 dari 41) — wajar karena review netral cenderung berisi keluhan tanpa emosi kuat</li>
+                    <li>Model <span class="green">adil</span> untuk kelas Positif dan Negatif (recall sama)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">8 / 12</div>
+</div>
+
+<!-- SLIDE 9: LDA Topic Modeling -->
+<div class="slide">
+    <h2>LDA Topic Modeling — Topik Keluhan Utama</h2>
+    <p style="margin-bottom: 20px;">Analisis <span class="accent">203 review negatif</span> → optimal <span class="accent">3 topik</span> (coherence score tertinggi)</p>
+
+    <div class="topic-card">
+        <h3>Topik 1: Kesulitan Pendaftaran & Pelaporan</h3>
+        <p class="keywords">mau, tidak, sangat, saja, susah, aplikasi, lapor, ribet, daftar, npwp</p>
+        <p>Pengguna mengalami hambatan dalam <span class="red">daftar NPWP</span> dan <span class="red">lapor SPT</span>. Keluhan "ribet" dan "susah" mendominasi.</p>
+    </div>
+
+    <div class="topic-card">
+        <h3>Topik 2: Kegagalan Verifikasi OTP</h3>
+        <p class="keywords">aplikasi, tidak, saja, kode, pajak, tapi, email, verifikasi, bikin, malah</p>
+        <p>Kode verifikasi <span class="red">tidak terkirim</span> ke email/HP. Pengguna frustrasi karena tidak bisa login tanpa OTP.</p>
+    </div>
+
+    <div class="topic-card">
+        <h3>Topik 3: Masalah EFIN & Login</h3>
+        <p class="keywords">tidak, sama, aplikasi, terus, efin, lama, gagal, sekali, password, apa</p>
+        <p>Gagal <span class="red">aktivasi EFIN</span>, password tidak bekerja, loading lama. Masalah autentikasi yang berulang.</p>
+    </div>
+    <div class="slide-number">9 / 12</div>
+</div>
+
+<!-- SLIDE 10: Rekomendasi -->
+<div class="slide">
+    <h2>Rekomendasi untuk Pengembang M-Pajak</h2>
+    <table class="rec-table">
+        <tr>
+            <th>Prioritas</th>
+            <th>Masalah</th>
+            <th>Rekomendasi</th>
+        </tr>
+        <tr>
+            <td class="red">🔴 Tinggi</td>
+            <td>Kegagalan OTP</td>
+            <td>Perbaiki infrastruktur email/SMS OTP, tambahkan fallback WhatsApp</td>
+        </tr>
+        <tr>
+            <td class="red">🔴 Tinggi</td>
+            <td>Aktivasi EFIN</td>
+            <td>Sederhanakan alur aktivasi, berikan panduan visual step-by-step</td>
+        </tr>
+        <tr>
+            <td class="yellow">🟡 Sedang</td>
+            <td>UI/UX Pelaporan</td>
+            <td>Redesign form pelaporan, tambahkan auto-save dan draft</td>
+        </tr>
+        <tr>
+            <td class="yellow">🟡 Sedang</td>
+            <td>Stabilitas</td>
+            <td>Fix bug force close, optimasi performa pada device low-end</td>
+        </tr>
+        <tr>
+            <td class="green">🟢 Rendah</td>
+            <td>Pendaftaran NPWP</td>
+            <td>Integrasi dengan API Dukcapil untuk verifikasi otomatis</td>
+        </tr>
+    </table>
+    <div class="slide-number">10 / 12</div>
+</div>
+
+<!-- SLIDE 11: Kesimpulan -->
+<div class="slide">
+    <h2>Kesimpulan</h2>
+    <div class="grid-2">
+        <div>
+            <div class="card stat-box">
+                <div class="number">76,26%</div>
+                <div class="label">Macro F1-Score Terbaik</div>
+            </div>
+            <div class="card stat-box" style="margin-top: 15px;">
+                <div class="number">0,9107</div>
+                <div class="label">ROC-AUC</div>
+            </div>
+        </div>
+        <div>
+            <ul>
+                <li><span class="accent">Word2Vec + Random Forest + SMOTE</span> adalah kombinasi terbaik</li>
+                <li><span class="green">SMOTE meningkatkan Macro F1 +0,82%</span> dibanding baseline</li>
+                <li><span class="accent">Sastrawi stemming</span> berhasil menormalisasi teks informal</li>
+                <li><span class="accent">LDA</span> mengidentifikasi 3 topik keluhan: OTP, EFIN, Pendaftaran</li>
+                <li>FastText from scratch performanya rendah (vocabulary terbatas: 482 words)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="card" style="margin-top: 25px;">
+        <h3>Perbandingan dengan Paper Baseline</h3>
+        <table>
+            <tr><th>Penelitian</th><th>Dataset</th><th>Metode</th><th>Hasil</th></tr>
+            <tr><td>Oktafiandi et al. (2025)</td><td>435 (Twitter/YT)</td><td>TF-IDF + SVM + SMOTE</td><td>96,89% Acc</td></tr>
+            <tr><td>Hadwan et al. (2022)</td><td>51K (Google Play)</td><td>Concat + SVM + SMOTE</td><td>94,38% Acc</td></tr>
+            <tr class="best-row"><td><strong>Penelitian Ini</strong></td><td><strong>8.099 (Google Play)</strong></td><td><strong>W2V + RF + SMOTE + Sastrawi</strong></td><td><strong>76,26% Macro F1</strong></td></tr>
+        </table>
+        <p style="font-size: 0.9em; color: #90a4ae; margin-top: 10px;">Catatan: Paper baseline menggunakan Accuracy (bias untuk imbalanced data). Kami menggunakan Macro F1 yang lebih fair.</p>
+    </div>
+    <div class="slide-number">11 / 12</div>
+</div>
+
+<!-- SLIDE 12: Penutup -->
+<div class="slide title-slide">
+    <h1>Terima Kasih</h1>
+    <div class="subtitle">Pertanyaan & Diskusi</div>
+    <div class="meta" style="margin-top: 50px;">
+        <p><strong>Repositori:</strong> final-project-txmg1</p>
+        <p><strong>Laporan:</strong> reports/laporan.md</p>
+        <p><strong>Results:</strong> results/ (tables, figures, confusion matrices)</p>
+        <p style="margin-top: 30px; color: #4fc3f7;">"Dari 8.099 keluhan, kami menemukan 3 masalah utama yang perlu segera diperbaiki."</p>
+    </div>
+    <div class="slide-number">12 / 12</div>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+    <button onclick="prevSlide()">← Prev</button>
+    <span class="page-info" id="pageInfo">1 / 12</span>
+    <button onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+
+    function showSlide(n) {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        document.getElementById('pageInfo').textContent = `${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+</script>
+
+</body>
+</html>
