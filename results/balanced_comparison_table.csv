@@ -1,0 +1,10 @@
+feature_extractor,model,weighted_f1,macro_f1,roc_auc,accuracy,train_time_s,infer_time_ms,best_params
+GloVe,XGBoost,0.7144629327756078,0.7144048363560559,0.8560230228896095,0.7131147540983607,20.97,54.26,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.7}"
+GloVe,Random Forest,0.7002122321065524,0.6999395039322444,0.8478935586259322,0.6967213114754098,1.97,287.39,"{'n_estimators': 200, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 20}"
+Word2Vec,XGBoost,0.6413117534746053,0.6412534980924005,0.7988582344839842,0.639344262295082,3.77,41.02,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.1, 'colsample_bytree': 0.8}"
+Word2Vec,Random Forest,0.6394793730859305,0.6388665535006999,0.8039963027134825,0.639344262295082,0.91,211.11,"{'n_estimators': 200, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 20}"
+Word2Vec,Decision Tree,0.6080441163426415,0.6084194130185275,0.7838919987560531,0.6311475409836066,0.04,1.41,"{'min_samples_split': 5, 'max_features': 'log2', 'max_depth': 5, 'criterion': 'gini'}"
+GloVe,Decision Tree,0.5413761350677723,0.5404904139081355,0.6606993005267029,0.5409836065573771,1.84,0.92,"{'min_samples_split': 10, 'max_features': None, 'max_depth': 20, 'criterion': 'entropy'}"
+FastText,Random Forest,0.5369322095455171,0.5362015316104268,0.6864291320508833,0.5327868852459017,0.89,259.29,"{'n_estimators': 200, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': None}"
+FastText,Decision Tree,0.5143365682512977,0.5143065010124445,0.6485769889575035,0.5081967213114754,0.25,0.75,"{'min_samples_split': 5, 'max_features': 'log2', 'max_depth': 5, 'criterion': 'gini'}"
+FastText,XGBoost,0.49274547440889616,0.4923740382228841,0.6954304697873938,0.4918032786885246,4.27,78.21,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.7}"

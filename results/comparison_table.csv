@@ -1,7 +1,7 @@
 Rank,feature_extractor,model,weighted_f1,macro_f1,roc_auc,accuracy,train_time_s,infer_time_ms,best_params
-1,Word2Vec,XGBoost,0.9019886137306088,0.6008281985733798,0.9371887438006119,0.9141975308641975,8.08,3.28,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.1, 'colsample_bytree': 0.8}"
-2,FastText,XGBoost,0.9011494583233292,0.6129085600523965,0.9329179383805153,0.9123456790123456,8.82,3.68,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.1, 'colsample_bytree': 0.8}"
-3,FastText,Random Forest,0.9001584614573594,0.5972074942700741,0.9267469842750748,0.912962962962963,4.92,20.63,"{'n_estimators': 200, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': None}"
-4,Word2Vec,Random Forest,0.895504546315017,0.5918524426555805,0.9337498298483939,0.908641975308642,4.83,20.26,"{'n_estimators': 200, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': None}"
-5,Word2Vec,Decision Tree,0.8539811939228367,0.5475177059899381,0.826048537298009,0.8487654320987654,1.36,0.2,"{'min_samples_split': 10, 'max_features': None, 'max_depth': 20, 'criterion': 'entropy'}"
-6,FastText,Decision Tree,0.8440933119808834,0.5706871082365154,0.8119181552382562,0.8364197530864198,1.58,0.2,"{'min_samples_split': 10, 'max_features': None, 'max_depth': 20, 'criterion': 'entropy'}"
+1,Word2Vec,XGBoost,0.652689704982712,0.6525289056934627,0.7921535089667836,0.6475409836065574,22.08,30.22,"{'subsample': 0.7, 'reg_alpha': 0.1, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.05, 'colsample_bytree': 0.7}"
+2,Word2Vec,Random Forest,0.6031861364849295,0.6026045058600134,0.8182874998148887,0.5983606557377049,1.93,103.37,"{'n_estimators': 100, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10}"
+3,FastText,XGBoost,0.5759681181667946,0.5755953731567207,0.7131863304061091,0.5737704918032787,26.45,13.02,"{'subsample': 1.0, 'reg_alpha': 1.0, 'n_estimators': 300, 'max_depth': 7, 'learning_rate': 0.01, 'colsample_bytree': 0.7}"
+4,Word2Vec,Decision Tree,0.5739629387664149,0.5740912367418392,0.6995152556261446,0.5737704918032787,0.06,0.77,"{'min_samples_split': 2, 'max_features': 'sqrt', 'max_depth': 5, 'criterion': 'gini'}"
+5,FastText,Random Forest,0.5042593523868255,0.5037107528486838,0.6855628119122721,0.5,2.03,104.64,"{'n_estimators': 100, 'min_samples_leaf': 2, 'max_features': 'log2', 'max_depth': 10}"
+6,FastText,Decision Tree,0.49259412971801436,0.4920581340834505,0.653992723898095,0.5,3.62,0.6,"{'min_samples_split': 10, 'max_features': None, 'max_depth': 20, 'criterion': 'entropy'}"

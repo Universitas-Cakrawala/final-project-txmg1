@@ -1,76 +1,63 @@
-# 📄 Laporan Akhir: Klasifikasi Sentimen Aplikasi CoretTax
+# Implementasi GloVe Embeddings dan XGBoost untuk Analisis Sentimen Masyarakat terhadap Aplikasi CoreTax (M-Pajak) pada Google Play Store
 
-## 1. Ringkasan Temuan Utama
+**ABSTRAK**
+Aplikasi M-Pajak (CoreTax) merupakan platform digital resmi Direktorat Jenderal Pajak untuk memudahkan layanan perpajakan bagi masyarakat Indonesia. Banyaknya ulasan pengguna di Google Play Store menjadi indikator kepuasan layanan yang perlu dianalisis. Penelitian ini mengimplementasikan teknik *text mining* untuk klasifikasi sentimen (Positif, Netral, Negatif) dengan mengatasi masalah ketimpangan data (*class imbalance*) menggunakan teknik *Random Undersampling*. Fitur ekstraksi yang digunakan adalah **GloVe Embeddings** yang mampu menangkap relasi semantik antar kata secara global. Pengujian dilakukan terhadap tiga model ML, di mana algoritma **XGBoost** menunjukkan performa terbaik pada dataset seimbang dengan nilai **Macro F1-Score sebesar 71,4%** dan akurasi 71,3%. Selain itu, analisis topik menggunakan **LDA (Latent Dirichlet Allocation)** mengungkap lima klaster keluhan utama, dengan masalah verifikasi OTP sebagai kendala sistemik yang paling sering dilaporkan.
 
-Berdasarkan eksperimen yang dilakukan pada dataset ulasan aplikasi CoretTax (8.099 ulasan), kami membandingkan 3 feature extractor (TF-IDF, FastText, Word2Vec) dan 3 model Machine Learning (Decision Tree, Random Forest, XGBoost).
-
-*   **Kombinasi Terbaik**: Kombinasi **Word2Vec + XGBoost** menjadi model terbaik dengan nilai **Weighted F1-Score sebesar 0.9020** dan akurasi **91.41%**.
-*   **Perbandingan Statistik vs Embeddings**: Model berbasis embeddings (Word2Vec & FastText) secara konsisten mengungguli TF-IDF pada dataset ini. Hal ini menunjukkan bahwa informasi semantik dan konteks kata yang ditangkap oleh embeddings sangat krusial untuk memahami nuansa ulasan pengguna bahasa Indonesia yang sering menggunakan slang atau singkatan.
-*   **Kompleksitas Model**: XGBoost terbukti lebih unggul dibandingkan Random Forest dan Decision Tree dalam hal akurasi dan F1-Score, meskipun membutuhkan waktu training yang sedikit lebih lama (rata-rata 8 detik).
-
-## 2. Analisis Trade-Off
-
-Berikut adalah tabel komparasi performa dan resource dari hasil running pada perangkat CPU (Core i7 Gen 11):
-
-| Kategori | Metode | Weighted F1 | Train Speed | RAM Usage | Interpretabilitas |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Statistik** | TF-IDF + Dec. Tree | *Error (Sparse)* | Sangat Cepat | Sangat Kecil | Sangat Tinggi |
-| **Embeddings** | FastText + Rand. Forest | 0.9002 | Cepat (4.9s) | Sedang | Sedang |
-| **Embeddings** | **Word2Vec + XGBoost** | **0.9020** | **Sedang (8.1s)** | **Sedang** | **Rendah** |
-
-> [!NOTE]
-> Penggunaan matriks TF-IDF yang sangat sparse (9.000+ fitur) menyebabkan kendala kompatibilitas pada meta-estimator di lingkungan CPU tertentu, sehingga model berbasis embeddings menjadi pilihan yang lebih stabil dan efisien.
-
-## 3. Perbandingan Antar Keluarga Model
-
-*   **Stabilitas**: Model **Random Forest** menunjukkan stabilitas yang paling baik di berbagai ekstraktor fitur dengan varians skor F1 yang sangat kecil (0.8955 - 0.9002).
-*   **Efisiensi**: **Decision Tree** adalah model paling ringan dengan waktu inferensi hampir instan (0.2ms), namun memiliki gap akurasi yang cukup jauh (~5%) dibandingkan model ensemble (RF/XGB).
-*   **Keunggulan XGBoost**: Pemanfaatan *gradient boosting* memungkinkan XGBoost menangkap pola error pada ulasan negatif yang dominan dengan lebih presisi dibandingkan Random Forest.
-
-## 4. Diskusi Metodologis
-
-*   **Class Imbalance**: Dataset memiliki ketidakseimbangan kelas yang ekstrim (79.8% Negatif, 2.5% Netral, 17.7% Positif). Hal ini menjelaskan mengapa **Weighted F1** sangat tinggi (~0.90) sementara **Macro F1** jauh lebih rendah (~0.60). Model sangat ahli mendeteksi ulasan negatif tetapi kesulitan pada kelas Netral.
-*   **Tantangan Kelas Netral**: Ulasan dengan rating 3 seringkali berisi campuran pujian dan kritik (misal: "Aplikasi bagus tapi sering force close"), sehingga sulit bagi model ML sederhana untuk membedakannya tanpa pemahaman konteks yang sangat dalam.
-*   **Efektivitas Preprocessing**: Langkah normalisasi slang dan penghapusan stopword terbukti membantu model embeddings dalam membentuk representasi vektor yang lebih rapat (*dense*).
-
-## 5. Saran Penelitian Lanjutan
-
-1.  **Penanganan Imbalance**: Menggunakan teknik *Resampling* (SMOTE) atau penyesuaian bobot kelas (*class weight*) pada model XGBoost untuk meningkatkan Macro F1-Score.
-2.  **Fine-tuning BERT**: Jika tersedia resource GPU, melakukan fine-tuning pada model **IndoBERT** untuk melihat apakah peningkatan akurasi sebanding dengan penambahan resource yang signifikan.
-3.  **Aspect-Based Analysis**: Melakukan ekstraksi aspek untuk membedah apakah keluhan negatif pengguna berfokus pada "UI/UX", "Bug Koneksi", atau "Fitur Pajak".
-
-## 6. Implikasi Praktis (Rekomendasi)
-
-Berdasarkan hasil analisis, berikut adalah rekomendasi implementasi:
-
-*   **IF** membutuhkan akurasi tertinggi untuk sistem monitoring sentimen otomatis:
-    👉 **Word2Vec + XGBoost**
-*   **IF** resource sangat terbatas (misal: dideploy di aplikasi mobile):
-    👉 **FastText + Random Forest** (Lebih hemat waktu inferensi)
-*   **IF** ingin melakukan audit kata kunci penyebab sentimen buruk:
-    👉 **TF-IDF + Decision Tree** (Gunakan visualisasi Tree untuk melihat percabangan kata).
-
-## 7. Kesimpulan Analisis Sentimen Pengguna
-
-Berdasarkan hasil pengolahan data dan klasifikasi menggunakan model terbaik, berikut adalah poin-poin kesimpulan mengenai sentimen pengguna terhadap aplikasi M-Pajak (CoretTax):
-
-1.  **Dominansi Keluhan Teknis**: Sebanyak **79.8%** ulasan bersifat **Negatif**. Analisis kata kunci menunjukkan bahwa keluhan utama pengguna berpusat pada masalah **Login**, **Registrasi**, dan **Stabilitas Aplikasi** (aplikasi sering tertutup sendiri atau *force close*).
-2.  **Ketidakpuasan pada Pembaruan (Update)**: Berdasarkan analisis temporal, sentimen negatif seringkali melonjak sesaat setelah pembaruan versi aplikasi dirilis. Hal ini mengindikasikan bahwa fitur baru atau perbaikan bug belum memenuhi ekspektasi pengguna atau justru menimbulkan kendala baru.
-3.  **Apresiasi Terbatas (Sentimen Positif)**: Sentimen positif (17.7%) umumnya datang dari pengguna yang merasa terbantu dengan kemudahan akses informasi pajak secara *online* tanpa harus ke kantor pajak, meskipun mereka tetap mengharapkan perbaikan performa sistem.
-4.  **Ambiguitas Kelas Netral**: Kelas netral yang sangat minim (2.5%) menunjukkan bahwa pengguna cenderung memiliki opini yang kuat (sangat puas atau sangat kecewa) terhadap aplikasi perpajakan ini.
+**Kata Kunci**: Analisis Sentimen, CoreTax, GloVe Embeddings, XGBoost, LDA, Text Mining
 
 ---
-*Laporan ini dihasilkan secara otomatis berdasarkan hasil eksperimen Proyek Text Mining CoreTax.*
 
+## I. PENDAHULUAN
+Di era digital, aplikasi mobile menjadi jembatan utama antara pemerintah dan masyarakat. Direktorat Jenderal Pajak merilis aplikasi M-Pajak (CoreTax) untuk meningkatkan efisiensi pelaporan pajak. Namun, akumulasi ulasan di Google Play Store menunjukkan adanya disparitas pengalaman pengguna. Analisis sentimen manual terhadap ribuan data menjadi tidak efisien, sehingga diperlukan pendekatan *text mining* otomatis. Penelitian ini bertujuan untuk membangun model klasifikasi yang adil dan mendalam, tidak hanya sekadar menghitung akurasi mentah, tetapi juga membedah akar permasalahan melalui *Topic Modeling*.
 
-### Visualisasi Pendukung:
+## II. STUDI LITERATUR
+### Text Mining & Preprocessing
+*Text mining* adalah proses ekstraksi informasi berguna dari data teks tak terstruktur. Tahapan krusial meliputi *Case Folding*, *Filtering* (Stopword), *Tokenizing*, dan *Stemming* menggunakan library Sastrawi.
+### GloVe Embeddings
+Berbeda dengan TF-IDF yang bersifat frekuensi-sentris, **GloVe (Global Vectors for Word Representation)** adalah model *unsupervised learning* yang menghasilkan representasi vektor kata berdasarkan statistik ko-okurensi global. Hal ini memungkinkan model memahami konteks semantik yang lebih kaya.
+### XGBoost
+*Extreme Gradient Boosting* (XGBoost) merupakan algoritma *ensemble learning* berbasis pohon keputusan yang dioptimalkan untuk kecepatan dan performa tinggi melalui regularisasi dan penanganan *missing values*.
 
-**1. Perbandingan F1-Score Antar Model:**
-![Grouped Bar F1](../results/figures/evaluation/grouped_bar_f1.png)
+## III. METODE
+Penelitian ini menggunakan alur sistematis sebagai berikut:
+1.  **Scraping Data**: Mengambil ~8.000 ulasan dari Google Play Store.
+2.  **Balancing Data**: Menerapkan *undersampling* untuk mendapatkan 609 data seimbang (203 sampel per kelas).
+3.  **Preprocessing**: Pembersihan teks dan normalisasi.
+4.  **Feature Extraction**: Mengonversi teks menjadi vektor menggunakan GloVe.
+5.  **Klasifikasi**: Melatih model Decision Tree, Random Forest, dan XGBoost dengan *Class Weighting*.
+6.  **Evaluasi**: Menggunakan *Confusion Matrix* dan metrik Macro F1-Score.
 
-**2. Analisis Trade-off (Akurasi vs Kecepatan):**
-![Quadrant Analysis](../results/figures/evaluation/quadrant_f1_vs_time.png)
+![Metode Penelitian](../results/figures/interpretation/sentiment_distribution.png)
+*Gambar 1: Alur Penyeimbangan Dataset (Undersampling).*
 
-**3. Tren Sentimen Berdasarkan Waktu:**
-![Temporal Analysis](../results/figures/interpretation/temporal_analysis.png)
+## IV. HASIL DAN PEMBAHASAN
+### Perbandingan Performa Model
+Berdasarkan pengujian pada dataset seimbang, kombinasi fitur embeddings menunjukkan performa yang lebih stabil dibandingkan metode statistik.
 
+| Feature Extractor | Model | Accuracy | Macro F1 | ROC-AUC |
+| :--- | :--- | :--- | :--- | :--- |
+| **GloVe** | **XGBoost** | **71,3%** | **71,4%** | **0,856** |
+| GloVe | Random Forest | 69,7% | 70,0% | 0,848 |
+| Word2Vec | XGBoost | 63,9% | 0.641% | 0,799 |
+
+![Comparison Chart](../results/figures/evaluation/grouped_bar_f1.png)
+*Gambar 2: Grafik Perbandingan F1-Score.*
+
+### Deep Analysis (LDA Topic Modeling)
+Analisis mendalam terhadap ulasan negatif menggunakan LDA mengidentifikasi 5 topik utama yang menjadi sumber ketidakpuasan pengguna:
+1.  **Kegagalan OTP**: Kode verifikasi tidak terkirim atau pulsa terpotong tanpa hasil.
+2.  **Aktivasi EFIN**: Kendala teknis pada sinkronisasi profil.
+3.  **UI/UX (Birokrasi)**: Keluhan "ribet" pada alur pelaporan.
+4.  **Stabilitas (Force Close)**: Bug teknis pada aplikasi.
+5.  **Pendaftaran NPWP**: Masalah pada fitur registrasi baru.
+
+![LDA Clusters](../results/figures/interpretation/topic_model_clusters.png)
+*Gambar 3: Visualisasi Klaster Topik Keluhan Negatif.*
+
+## V. KESIMPULAN
+Penelitian ini membuktikan bahwa penggunaan **GloVe Embeddings** dikombinasikan dengan **XGBoost** mampu menghasilkan klasifikasi sentimen yang jauh lebih presisi dan adil (Macro F1 71,4%) pada dataset yang diseimbangkan. Penurunan akurasi dari 91% (data timpang) ke 71% (data seimbang) merupakan indikator bahwa model telah berhasil mengatasi bias kelas mayoritas. Rekomendasi utama bagi pengembang adalah perbaikan mendesak pada infrastruktur pengiriman OTP untuk meningkatkan kepuasan pengguna secara signifikan.
+
+## VI. REFERENSI
+*   Ceci, L. (2024). Statistics on Google Play Store Apps. Statista.
+*   Astuti, K. C., et al. (2024). Implementasi Text Mining Korlantas Polri. Remik Journal.
+*   Pennington, J., et al. (2014). GloVe: Global Vectors for Word Representation. EMNLP.

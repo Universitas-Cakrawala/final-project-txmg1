@@ -107,11 +107,25 @@ class ModelWrapper:
                 n_jobs=-1,
                 error_score='raise'
             )
-            search.fit(X, y_train)
+            
+            # Handle sample weights for XGBoost or others if needed
+            fit_params = {}
+            if self.name == 'XGBoost':
+                from sklearn.utils.class_weight import compute_sample_weight
+                sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
+                fit_params['sample_weight'] = sample_weights
+
+            search.fit(X, y_train, **fit_params)
             self.best_model = search.best_estimator_
             self.best_params = search.best_params_
         else:
-            self.model.fit(X, y_train)
+            fit_params = {}
+            if self.name == 'XGBoost':
+                from sklearn.utils.class_weight import compute_sample_weight
+                sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
+                fit_params['sample_weight'] = sample_weights
+                
+            self.model.fit(X, y_train, **fit_params)
             self.best_model = self.model
             self.best_params = {}
 

@@ -656,7 +656,7 @@ def get_all_extractors(subset: str = 'priority') -> dict:
     """
     if subset == 'priority':
         return {
-            'TF-IDF': TFIDFExtractor(max_features=10000),
+            'GloVe': GloVeExtractor(),
             'FastText': FastTextExtractor(train_from_scratch=True),
             'Word2Vec': Word2VecExtractor(train_from_scratch=True),
         }
