@@ -1,6 +1,6 @@
 # 📝 Scripts Directory
 
-Folder ini berisi utility scripts untuk project sentiment classification CoretTax.
+Folder ini berisi utility scripts untuk project sentiment classification CoreTax.
 
 ## 📥 Download Scripts
 

@@ -1,8 +1,8 @@
 """
-src — CoretTax Sentiment Classification Pipeline
+src — CoreTax Sentiment Classification Pipeline
 =================================================
 Modular Python package for text mining sentiment classification
-on CoretTax / M-Pajak Google Play Store reviews.
+on CoreTax / M-Pajak Google Play Store reviews.
 
 Modules:
     - preprocessing: Text cleaning & NLP pipeline for Bahasa Indonesia

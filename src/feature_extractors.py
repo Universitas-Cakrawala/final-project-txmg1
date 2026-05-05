@@ -22,7 +22,7 @@ Usage:
     extractor = TFIDFExtractor()
     X_train, X_test = extractor.fit_transform(train_texts, test_texts)
 
-Author: Text Mining Project — CoretTax Sentiment Classification
+Author: Text Mining Project — CoreTax Sentiment Classification
 """
 
 import os
@@ -32,7 +32,7 @@ import scipy.sparse as sp
 from typing import Tuple, Optional, List
 from abc import ABC, abstractmethod
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 
 class BaseExtractor(ABC):
@@ -43,14 +43,15 @@ class BaseExtractor(ABC):
         self._is_fitted = False
 
     @abstractmethod
-    def fit_transform(self, train_texts: List[str],
-                      test_texts: List[str]) -> Tuple[np.ndarray, np.ndarray]:
+    def fit_transform(
+        self, train_texts: List[str], test_texts: List[str]
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Fit pada train data dan transform kedua split."""
         pass
 
     def get_feature_type(self) -> str:
         """Return 'sparse' atau 'dense'."""
-        return 'dense'
+        return "dense"
 
     def __repr__(self):
         return f"{self.__class__.__name__}(name='{self.name}')"
@@ -60,6 +61,7 @@ class BaseExtractor(ABC):
 # 1. TF-IDF (Prompt 3.1)
 # ======================================================================
 
+
 class TFIDFExtractor(BaseExtractor):
     """
     TF-IDF Feature Extraction.
@@ -68,11 +70,14 @@ class TFIDFExtractor(BaseExtractor):
     Output: sparse matrix.
     """
 
-    def __init__(self, max_features: int = 10000,
-                 ngram_range: tuple = (1, 2),
-                 min_df: int = 2,
-                 max_df: float = 0.95):
-        super().__init__(name='TF-IDF')
+    def __init__(
+        self,
+        max_features: int = 10000,
+        ngram_range: tuple = (1, 2),
+        min_df: int = 2,
+        max_df: float = 0.95,
+    ):
+        super().__init__(name="TF-IDF")
         self.max_features = max_features
         self.ngram_range = ngram_range
         self.min_df = min_df
@@ -87,20 +92,22 @@ class TFIDFExtractor(BaseExtractor):
             ngram_range=self.ngram_range,
             min_df=self.min_df,
             max_df=self.max_df,
-            sublinear_tf=True  # Menggunakan 1 + log(tf), lebih baik untuk teks
+            sublinear_tf=True,  # Menggunakan 1 + log(tf), lebih baik untuk teks
         )
 
         X_train = self.vectorizer.fit_transform(train_texts)
         X_test = self.vectorizer.transform(test_texts)
         self._is_fitted = True
 
-        print(f"   TF-IDF: vocab={len(self.vectorizer.vocabulary_)}, "
-              f"shape=({X_train.shape[0]}, {X_train.shape[1]})")
+        print(
+            f"   TF-IDF: vocab={len(self.vectorizer.vocabulary_)}, "
+            f"shape=({X_train.shape[0]}, {X_train.shape[1]})"
+        )
 
         return X_train, X_test
 
     def get_feature_type(self):
-        return 'sparse'
+        return "sparse"
 
     def get_top_terms(self, n: int = 20) -> list:
         """Return top N terms berdasarkan IDF score."""
@@ -116,6 +123,7 @@ class TFIDFExtractor(BaseExtractor):
 # 2. BM25 (Prompt 3.5)
 # ======================================================================
 
+
 class BM25Extractor(BaseExtractor):
     """
     BM25 Retrieval-Based Feature Extraction.
@@ -127,17 +135,18 @@ class BM25Extractor(BaseExtractor):
     """
 
     def __init__(self, k1: float = 1.5, b: float = 0.75):
-        super().__init__(name='BM25')
+        super().__init__(name="BM25")
         self.k1 = k1
         self.b = b
         self._class_models = {}
 
-    def fit_transform(self, train_texts, test_texts,
-                      train_labels=None):
+    def fit_transform(self, train_texts, test_texts, train_labels=None):
         from rank_bm25 import BM25Okapi
 
         if train_labels is None:
-            raise ValueError("BM25Extractor membutuhkan train_labels untuk membuat corpus per kelas")
+            raise ValueError(
+                "BM25Extractor membutuhkan train_labels untuk membuat corpus per kelas"
+            )
 
         # Tokenize
         train_tokenized = [text.split() for text in train_texts]
@@ -148,8 +157,11 @@ class BM25Extractor(BaseExtractor):
         self._class_models = {}
 
         for label in unique_labels:
-            class_docs = [train_tokenized[i] for i in range(len(train_labels))
-                          if train_labels[i] == label]
+            class_docs = [
+                train_tokenized[i]
+                for i in range(len(train_labels))
+                if train_labels[i] == label
+            ]
             self._class_models[label] = BM25Okapi(class_docs, k1=self.k1, b=self.b)
 
         # Compute features
@@ -170,12 +182,13 @@ class BM25Extractor(BaseExtractor):
         return X_train, X_test
 
     def get_feature_type(self):
-        return 'dense'
+        return "dense"
 
 
 # ======================================================================
 # 3. Word2Vec (Prompt 3.6)
 # ======================================================================
+
 
 class Word2VecExtractor(BaseExtractor):
     """
@@ -186,12 +199,15 @@ class Word2VecExtractor(BaseExtractor):
     - From scratch: Train pada corpus ulasan
     """
 
-    def __init__(self, vector_size: int = 100,
-                 window: int = 5,
-                 min_count: int = 2,
-                 pretrained_path: Optional[str] = None,
-                 train_from_scratch: bool = True):
-        super().__init__(name='Word2Vec')
+    def __init__(
+        self,
+        vector_size: int = 100,
+        window: int = 5,
+        min_count: int = 2,
+        pretrained_path: Optional[str] = None,
+        train_from_scratch: bool = True,
+    ):
+        super().__init__(name="Word2Vec")
         self.vector_size = vector_size
         self.window = window
         self.min_count = min_count
@@ -208,6 +224,7 @@ class Word2VecExtractor(BaseExtractor):
         if self.pretrained_path and os.path.exists(self.pretrained_path):
             # Load pre-trained
             from gensim.models import KeyedVectors
+
             self.model = KeyedVectors.load(self.pretrained_path)
             print(f"   Word2Vec: loaded pre-trained from {self.pretrained_path}")
         else:
@@ -219,7 +236,7 @@ class Word2VecExtractor(BaseExtractor):
                 min_count=self.min_count,
                 workers=4,
                 epochs=20,
-                sg=1  # Skip-gram (lebih baik untuk rare words)
+                sg=1,  # Skip-gram (lebih baik untuk rare words)
             )
             self.model = self.model.wv
             print(f"   Word2Vec: trained from scratch, vocab={len(self.model)}")
@@ -231,14 +248,20 @@ class Word2VecExtractor(BaseExtractor):
         # OOV stats
         all_tokens = set(t for tokens in train_tokenized for t in tokens)
         oov = sum(1 for t in all_tokens if t not in self.model)
-        print(f"   Word2Vec: OOV rate = {oov}/{len(all_tokens)} ({oov/max(len(all_tokens),1)*100:.1f}%)")
+        print(
+            f"   Word2Vec: OOV rate = {oov}/{len(all_tokens)} ({oov/max(len(all_tokens),1)*100:.1f}%)"
+        )
         print(f"   Word2Vec: shape=({X_train.shape[0]}, {X_train.shape[1]})")
 
         return X_train, X_test
 
     def _texts_to_vectors(self, tokenized_texts):
         """Mean pooling of word vectors."""
-        dim = self.model.vector_size if hasattr(self.model, 'vector_size') else self.vector_size
+        dim = (
+            self.model.vector_size
+            if hasattr(self.model, "vector_size")
+            else self.vector_size
+        )
         vectors = np.zeros((len(tokenized_texts), dim))
         for i, tokens in enumerate(tokenized_texts):
             valid_vectors = [self.model[t] for t in tokens if t in self.model]
@@ -251,6 +274,7 @@ class Word2VecExtractor(BaseExtractor):
 # 4. GloVe (Prompt 3.2) — Menggunakan FastText Indonesian vectors
 # ======================================================================
 
+
 class GloVeExtractor(BaseExtractor):
     """
     GloVe-style Feature Extraction menggunakan FastText Indonesian vectors.
@@ -259,10 +283,13 @@ class GloVeExtractor(BaseExtractor):
     sebagai pengganti GloVe karena tidak ada GloVe pre-trained untuk Bahasa Indonesia.
     """
 
-    def __init__(self, vectors_path: str = "data/embeddings/cc.id.300.vec",
-                 dim: int = 300,
-                 max_vocab: int = 200000):
-        super().__init__(name='GloVe')
+    def __init__(
+        self,
+        vectors_path: str = "data/embeddings/cc.id.300.vec",
+        dim: int = 300,
+        max_vocab: int = 200000,
+    ):
+        super().__init__(name="GloVe")
         self.vectors_path = vectors_path
         self.dim = dim
         self.max_vocab = max_vocab
@@ -284,7 +311,9 @@ class GloVeExtractor(BaseExtractor):
         all_tokens = set(t for tokens in train_tokenized for t in tokens)
         oov = sum(1 for t in all_tokens if t not in self.word_vectors)
         print(f"   GloVe: vocab loaded={len(self.word_vectors)}")
-        print(f"   GloVe: OOV rate = {oov}/{len(all_tokens)} ({oov/max(len(all_tokens),1)*100:.1f}%)")
+        print(
+            f"   GloVe: OOV rate = {oov}/{len(all_tokens)} ({oov/max(len(all_tokens),1)*100:.1f}%)"
+        )
         print(f"   GloVe: shape=({X_train.shape[0]}, {X_train.shape[1]})")
 
         return X_train, X_test
@@ -292,7 +321,7 @@ class GloVeExtractor(BaseExtractor):
     def _load_vectors(self):
         """Load word vectors dari file .vec (format teks)."""
         self.word_vectors = {}
-        with open(self.vectors_path, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(self.vectors_path, "r", encoding="utf-8", errors="ignore") as f:
             # Skip header line (jika ada)
             first_line = f.readline().strip().split()
             if len(first_line) == 2:
@@ -324,7 +353,9 @@ class GloVeExtractor(BaseExtractor):
         """Mean pooling of word vectors."""
         vectors = np.zeros((len(tokenized_texts), self.dim))
         for i, tokens in enumerate(tokenized_texts):
-            valid_vectors = [self.word_vectors[t] for t in tokens if t in self.word_vectors]
+            valid_vectors = [
+                self.word_vectors[t] for t in tokens if t in self.word_vectors
+            ]
             if valid_vectors:
                 vectors[i] = np.mean(valid_vectors, axis=0)
         return vectors
@@ -334,6 +365,7 @@ class GloVeExtractor(BaseExtractor):
 # 5. FastText (Prompt 3.3)
 # ======================================================================
 
+
 class FastTextExtractor(BaseExtractor):
     """
     FastText Feature Extraction.
@@ -342,10 +374,13 @@ class FastTextExtractor(BaseExtractor):
     yang sangat umum di teks ulasan informal.
     """
 
-    def __init__(self, pretrained_path: Optional[str] = None,
-                 vector_size: int = 100,
-                 train_from_scratch: bool = True):
-        super().__init__(name='FastText')
+    def __init__(
+        self,
+        pretrained_path: Optional[str] = None,
+        vector_size: int = 100,
+        train_from_scratch: bool = True,
+    ):
+        super().__init__(name="FastText")
         self.pretrained_path = pretrained_path
         self.vector_size = vector_size
         self.train_from_scratch = train_from_scratch
@@ -358,6 +393,7 @@ class FastTextExtractor(BaseExtractor):
         if self.pretrained_path and os.path.exists(self.pretrained_path):
             # Load pre-trained FastText binary
             import fasttext
+
             self.model = fasttext.load_model(self.pretrained_path)
             self.vector_size = self.model.get_dimension()
             print(f"   FastText: loaded pre-trained (dim={self.vector_size})")
@@ -366,6 +402,7 @@ class FastTextExtractor(BaseExtractor):
         else:
             # Train from scratch using gensim
             from gensim.models import FastText as GensimFastText
+
             self.model = GensimFastText(
                 sentences=train_tokenized,
                 vector_size=self.vector_size,
@@ -374,7 +411,7 @@ class FastTextExtractor(BaseExtractor):
                 workers=4,
                 epochs=20,
                 min_n=3,  # minimum subword length
-                max_n=6   # maximum subword length
+                max_n=6,  # maximum subword length
             )
             print(f"   FastText: trained from scratch, vocab={len(self.model.wv)}")
             X_train = self._texts_to_vectors_gensim(train_tokenized)
@@ -411,6 +448,7 @@ class FastTextExtractor(BaseExtractor):
 # 6. DistilBERT (Prompt 3.4)
 # ======================================================================
 
+
 class DistilBERTExtractor(BaseExtractor):
     """
     DistilBERT Feature Extraction (Frozen Encoder).
@@ -419,10 +457,13 @@ class DistilBERTExtractor(BaseExtractor):
     Model: distilbert-base-multilingual-cased
     """
 
-    def __init__(self, model_name: str = 'distilbert-base-multilingual-cased',
-                 max_length: int = 128,
-                 batch_size: int = 32):
-        super().__init__(name='DistilBERT')
+    def __init__(
+        self,
+        model_name: str = "distilbert-base-multilingual-cased",
+        max_length: int = 128,
+        batch_size: int = 32,
+    ):
+        super().__init__(name="DistilBERT")
         self.model_name = model_name
         self.max_length = max_length
         self.batch_size = batch_size
@@ -431,7 +472,7 @@ class DistilBERTExtractor(BaseExtractor):
         import torch
         from transformers import AutoTokenizer, AutoModel
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"   DistilBERT: device={device}, model={self.model_name}")
 
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -457,10 +498,13 @@ class DistilBERTExtractor(BaseExtractor):
 
         all_embeddings = []
         for i in range(0, len(texts), self.batch_size):
-            batch_texts = texts[i:i + self.batch_size]
+            batch_texts = texts[i : i + self.batch_size]
             encoded = tokenizer(
-                batch_texts, padding=True, truncation=True,
-                max_length=self.max_length, return_tensors='pt'
+                batch_texts,
+                padding=True,
+                truncation=True,
+                max_length=self.max_length,
+                return_tensors="pt",
             ).to(device)
 
             with torch.no_grad():
@@ -471,8 +515,10 @@ class DistilBERTExtractor(BaseExtractor):
             all_embeddings.append(cls_embeddings)
 
             if (i // self.batch_size) % 10 == 0:
-                print(f"      Batch {i//self.batch_size + 1}/"
-                      f"{(len(texts)-1)//self.batch_size + 1}")
+                print(
+                    f"      Batch {i//self.batch_size + 1}/"
+                    f"{(len(texts)-1)//self.batch_size + 1}"
+                )
 
         return np.vstack(all_embeddings)
 
@@ -480,6 +526,7 @@ class DistilBERTExtractor(BaseExtractor):
 # ======================================================================
 # 7. BERT / IndoBERT (Prompt 3.7)
 # ======================================================================
+
 
 class BERTExtractor(BaseExtractor):
     """
@@ -492,11 +539,14 @@ class BERTExtractor(BaseExtractor):
     Model: indobenchmark/indobert-base-p1
     """
 
-    def __init__(self, model_name: str = 'indobenchmark/indobert-base-p1',
-                 max_length: int = 128,
-                 batch_size: int = 32,
-                 pooling: str = 'cls'):
-        super().__init__(name='BERT-IndoBERT')
+    def __init__(
+        self,
+        model_name: str = "indobenchmark/indobert-base-p1",
+        max_length: int = 128,
+        batch_size: int = 32,
+        pooling: str = "cls",
+    ):
+        super().__init__(name="BERT-IndoBERT")
         self.model_name = model_name
         self.max_length = max_length
         self.batch_size = batch_size
@@ -506,8 +556,10 @@ class BERTExtractor(BaseExtractor):
         import torch
         from transformers import AutoTokenizer, AutoModel
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        print(f"   BERT: device={device}, model={self.model_name}, pooling={self.pooling}")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(
+            f"   BERT: device={device}, model={self.model_name}, pooling={self.pooling}"
+        )
 
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         model = AutoModel.from_pretrained(self.model_name).to(device)
@@ -530,26 +582,28 @@ class BERTExtractor(BaseExtractor):
 
         all_embeddings = []
         for i in range(0, len(texts), self.batch_size):
-            batch_texts = texts[i:i + self.batch_size]
+            batch_texts = texts[i : i + self.batch_size]
             encoded = tokenizer(
-                batch_texts, padding=True, truncation=True,
-                max_length=self.max_length, return_tensors='pt'
+                batch_texts,
+                padding=True,
+                truncation=True,
+                max_length=self.max_length,
+                return_tensors="pt",
             ).to(device)
 
             with torch.no_grad():
                 outputs = model(**encoded)
 
-            if self.pooling == 'mean':
+            if self.pooling == "mean":
                 # Mean pooling with attention mask
-                attention_mask = encoded['attention_mask']
+                attention_mask = encoded["attention_mask"]
                 token_embeddings = outputs.last_hidden_state
-                input_mask_expanded = attention_mask.unsqueeze(-1).expand(
-                    token_embeddings.size()
-                ).float()
-                embeddings = (
-                    torch.sum(token_embeddings * input_mask_expanded, 1) /
-                    torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+                input_mask_expanded = (
+                    attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
                 )
+                embeddings = torch.sum(
+                    token_embeddings * input_mask_expanded, 1
+                ) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
             else:
                 # [CLS] token
                 embeddings = outputs.last_hidden_state[:, 0, :]
@@ -557,8 +611,10 @@ class BERTExtractor(BaseExtractor):
             all_embeddings.append(embeddings.cpu().numpy())
 
             if (i // self.batch_size) % 10 == 0:
-                print(f"      Batch {i//self.batch_size + 1}/"
-                      f"{(len(texts)-1)//self.batch_size + 1}")
+                print(
+                    f"      Batch {i//self.batch_size + 1}/"
+                    f"{(len(texts)-1)//self.batch_size + 1}"
+                )
 
         return np.vstack(all_embeddings)
 
@@ -567,6 +623,7 @@ class BERTExtractor(BaseExtractor):
 # 8. RoBERTa / XLM-RoBERTa (Prompt 3.8)
 # ======================================================================
 
+
 class RoBERTaExtractor(BaseExtractor):
     """
     RoBERTa / XLM-RoBERTa Feature Extraction.
@@ -574,11 +631,14 @@ class RoBERTaExtractor(BaseExtractor):
     Model: xlm-roberta-base (multilingual, proven baik untuk low-resource languages)
     """
 
-    def __init__(self, model_name: str = 'xlm-roberta-base',
-                 max_length: int = 128,
-                 batch_size: int = 32,
-                 pooling: str = 'cls'):
-        super().__init__(name='RoBERTa')
+    def __init__(
+        self,
+        model_name: str = "xlm-roberta-base",
+        max_length: int = 128,
+        batch_size: int = 32,
+        pooling: str = "cls",
+    ):
+        super().__init__(name="RoBERTa")
         self.model_name = model_name
         self.max_length = max_length
         self.batch_size = batch_size
@@ -588,7 +648,7 @@ class RoBERTaExtractor(BaseExtractor):
         import torch
         from transformers import AutoTokenizer, AutoModel
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"   RoBERTa: device={device}, model={self.model_name}")
 
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -612,25 +672,27 @@ class RoBERTaExtractor(BaseExtractor):
 
         all_embeddings = []
         for i in range(0, len(texts), self.batch_size):
-            batch_texts = texts[i:i + self.batch_size]
+            batch_texts = texts[i : i + self.batch_size]
             encoded = tokenizer(
-                batch_texts, padding=True, truncation=True,
-                max_length=self.max_length, return_tensors='pt'
+                batch_texts,
+                padding=True,
+                truncation=True,
+                max_length=self.max_length,
+                return_tensors="pt",
             ).to(device)
 
             with torch.no_grad():
                 outputs = model(**encoded)
 
-            if self.pooling == 'mean':
-                attention_mask = encoded['attention_mask']
+            if self.pooling == "mean":
+                attention_mask = encoded["attention_mask"]
                 token_embeddings = outputs.last_hidden_state
-                input_mask_expanded = attention_mask.unsqueeze(-1).expand(
-                    token_embeddings.size()
-                ).float()
-                embeddings = (
-                    torch.sum(token_embeddings * input_mask_expanded, 1) /
-                    torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+                input_mask_expanded = (
+                    attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
                 )
+                embeddings = torch.sum(
+                    token_embeddings * input_mask_expanded, 1
+                ) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
             else:
                 embeddings = outputs.last_hidden_state[:, 0, :]
 
@@ -643,7 +705,8 @@ class RoBERTaExtractor(BaseExtractor):
 # Registry — Semua Extractors
 # ======================================================================
 
-def get_all_extractors(subset: str = 'priority') -> dict:
+
+def get_all_extractors(subset: str = "priority") -> dict:
     """
     Return dictionary of all feature extractors.
 
@@ -654,23 +717,22 @@ def get_all_extractors(subset: str = 'priority') -> dict:
     Returns:
         Dict[str, BaseExtractor]
     """
-    if subset == 'priority':
+    if subset == "priority":
         return {
-            'GloVe': GloVeExtractor(),
-            'FastText': FastTextExtractor(train_from_scratch=True),
-            'Word2Vec': Word2VecExtractor(train_from_scratch=True),
+            "GloVe": GloVeExtractor(),
+            "FastText": FastTextExtractor(train_from_scratch=True),
+            "Word2Vec": Word2VecExtractor(train_from_scratch=True),
         }
     else:
         return {
-            'TF-IDF': TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
-            'BM25': BM25Extractor(),
-            'Word2Vec': Word2VecExtractor(vector_size=100, train_from_scratch=True),
-            'GloVe': GloVeExtractor(vectors_path='data/embeddings/cc.id.300.vec'),
-            'FastText': FastTextExtractor(vector_size=100, train_from_scratch=True),
-            'DistilBERT': DistilBERTExtractor(),
-            'IndoBERT': BERTExtractor(
-                model_name='indobenchmark/indobert-base-p1',
-                pooling='cls'
+            "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
+            "BM25": BM25Extractor(),
+            "Word2Vec": Word2VecExtractor(vector_size=100, train_from_scratch=True),
+            "GloVe": GloVeExtractor(vectors_path="data/embeddings/cc.id.300.vec"),
+            "FastText": FastTextExtractor(vector_size=100, train_from_scratch=True),
+            "DistilBERT": DistilBERTExtractor(),
+            "IndoBERT": BERTExtractor(
+                model_name="indobenchmark/indobert-base-p1", pooling="cls"
             ),
-            'RoBERTa': RoBERTaExtractor(),
+            "RoBERTa": RoBERTaExtractor(),
         }

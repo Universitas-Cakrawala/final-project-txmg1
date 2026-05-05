@@ -39,3 +39,6 @@ results/feature_matrices/
 # OS
 .DS_Store
 Thumbs.db
+
+# reports
+reports/

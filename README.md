@@ -1,6 +1,6 @@
-# 📊 CoretTax Sentiment Classification Project
+# 📊 CoreTax Sentiment Classification Project
 
-Proyek ini bertujuan untuk melakukan analisis sentimen ternary (Positif, Netral, Negatif) pada ulasan aplikasi **CoretTax/M-Pajak** menggunakan berbagai teknik Text Mining dan Machine Learning.
+Proyek ini bertujuan untuk melakukan analisis sentimen ternary (Positif, Netral, Negatif) pada ulasan aplikasi **CoreTax/M-Pajak** menggunakan berbagai teknik Text Mining dan Machine Learning.
 
 ## 📁 Struktur Proyek
 

@@ -26,7 +26,7 @@ Usage:
     from src.models import get_all_models
     models = get_all_models(feature_type='sparse')
 
-Author: Text Mining Project — CoretTax Sentiment Classification
+Author: Text Mining Project — CoreTax Sentiment Classification
 """
 
 import time
@@ -36,7 +36,7 @@ import scipy.sparse as sp
 from typing import Dict, Any, Optional, Tuple
 from sklearn.model_selection import RandomizedSearchCV
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 
 class ModelWrapper:
@@ -49,9 +49,14 @@ class ModelWrapper:
     - Kompatibilitas check (sparse vs dense features)
     """
 
-    def __init__(self, name: str, model, param_grid: dict,
-                 compatible_features: list = None,
-                 needs_dense: bool = False):
+    def __init__(
+        self,
+        name: str,
+        model,
+        param_grid: dict,
+        compatible_features: list = None,
+        needs_dense: bool = False,
+    ):
         """
         Args:
             name: Nama model (untuk display)
@@ -64,7 +69,11 @@ class ModelWrapper:
         self.name = name
         self.model = model
         self.param_grid = param_grid
-        self.compatible_features = compatible_features or ['sparse', 'dense_low', 'dense_high']
+        self.compatible_features = compatible_features or [
+            "sparse",
+            "dense_low",
+            "dense_high",
+        ]
         self.needs_dense = needs_dense
         self.best_model = None
         self.best_params = None
@@ -74,8 +83,14 @@ class ModelWrapper:
         """Check apakah model kompatibel dengan tipe feature tertentu."""
         return feature_type in self.compatible_features
 
-    def fit(self, X_train, y_train, cv: int = 3, n_iter: int = 20,
-            scoring: str = 'f1_weighted') -> 'ModelWrapper':
+    def fit(
+        self,
+        X_train,
+        y_train,
+        cv: int = 3,
+        n_iter: int = 20,
+        scoring: str = "f1_weighted",
+    ) -> "ModelWrapper":
         """
         Fit model dengan hyperparameter tuning.
 
@@ -105,26 +120,32 @@ class ModelWrapper:
                 scoring=scoring,
                 random_state=42,
                 n_jobs=-1,
-                error_score='raise'
+                error_score="raise",
             )
-            
+
             # Handle sample weights for XGBoost or others if needed
             fit_params = {}
-            if self.name == 'XGBoost':
+            if self.name == "XGBoost":
                 from sklearn.utils.class_weight import compute_sample_weight
-                sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
-                fit_params['sample_weight'] = sample_weights
+
+                sample_weights = compute_sample_weight(
+                    class_weight="balanced", y=y_train
+                )
+                fit_params["sample_weight"] = sample_weights
 
             search.fit(X, y_train, **fit_params)
             self.best_model = search.best_estimator_
             self.best_params = search.best_params_
         else:
             fit_params = {}
-            if self.name == 'XGBoost':
+            if self.name == "XGBoost":
                 from sklearn.utils.class_weight import compute_sample_weight
-                sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
-                fit_params['sample_weight'] = sample_weights
-                
+
+                sample_weights = compute_sample_weight(
+                    class_weight="balanced", y=y_train
+                )
+                fit_params["sample_weight"] = sample_weights
+
             self.model.fit(X, y_train, **fit_params)
             self.best_model = self.model
             self.best_params = {}
@@ -144,9 +165,9 @@ class ModelWrapper:
         X = X_test
         if self.needs_dense and sp.issparse(X):
             X = X.toarray()
-        if hasattr(self.best_model, 'predict_proba'):
+        if hasattr(self.best_model, "predict_proba"):
             return self.best_model.predict_proba(X)
-        elif hasattr(self.best_model, 'decision_function'):
+        elif hasattr(self.best_model, "decision_function"):
             return self.best_model.decision_function(X)
         return None
 
@@ -165,20 +186,21 @@ class ModelWrapper:
 # Model Factory Functions
 # ======================================================================
 
+
 def _decision_tree() -> ModelWrapper:
     """Prompt 4.1 — Decision Tree."""
     from sklearn.tree import DecisionTreeClassifier
 
     return ModelWrapper(
-        name='Decision Tree',
-        model=DecisionTreeClassifier(class_weight='balanced', random_state=42),
+        name="Decision Tree",
+        model=DecisionTreeClassifier(class_weight="balanced", random_state=42),
         param_grid={
-            'max_depth': [5, 10, 20, None],
-            'min_samples_split': [2, 5, 10],
-            'criterion': ['gini', 'entropy'],
-            'max_features': ['sqrt', 'log2', None],
+            "max_depth": [5, 10, 20, None],
+            "min_samples_split": [2, 5, 10],
+            "criterion": ["gini", "entropy"],
+            "max_features": ["sqrt", "log2", None],
         },
-        needs_dense=True  # Fix ambiguous length error
+        needs_dense=True,  # Fix ambiguous length error
     )
 
 
@@ -187,15 +209,17 @@ def _random_forest() -> ModelWrapper:
     from sklearn.ensemble import RandomForestClassifier
 
     return ModelWrapper(
-        name='Random Forest',
-        model=RandomForestClassifier(class_weight='balanced', random_state=42, n_jobs=-1),
+        name="Random Forest",
+        model=RandomForestClassifier(
+            class_weight="balanced", random_state=42, n_jobs=-1
+        ),
         param_grid={
-            'n_estimators': [100, 200, 500],
-            'max_depth': [10, 20, None],
-            'max_features': ['sqrt', 'log2'],
-            'min_samples_leaf': [1, 2, 4],
+            "n_estimators": [100, 200, 500],
+            "max_depth": [10, 20, None],
+            "max_features": ["sqrt", "log2"],
+            "min_samples_leaf": [1, 2, 4],
         },
-        needs_dense=True  # Fix ambiguous length error
+        needs_dense=True,  # Fix ambiguous length error
     )
 
 
@@ -204,22 +228,19 @@ def _xgboost() -> ModelWrapper:
     from xgboost import XGBClassifier
 
     return ModelWrapper(
-        name='XGBoost',
+        name="XGBoost",
         model=XGBClassifier(
-            use_label_encoder=False,
-            eval_metric='mlogloss',
-            random_state=42,
-            n_jobs=-1
+            use_label_encoder=False, eval_metric="mlogloss", random_state=42, n_jobs=-1
         ),
         param_grid={
-            'n_estimators': [100, 300, 500],
-            'max_depth': [3, 5, 7],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'subsample': [0.7, 0.8, 1.0],
-            'colsample_bytree': [0.7, 0.8, 1.0],
-            'reg_alpha': [0, 0.1, 1.0],
+            "n_estimators": [100, 300, 500],
+            "max_depth": [3, 5, 7],
+            "learning_rate": [0.01, 0.05, 0.1],
+            "subsample": [0.7, 0.8, 1.0],
+            "colsample_bytree": [0.7, 0.8, 1.0],
+            "reg_alpha": [0, 0.1, 1.0],
         },
-        needs_dense=True  # Fix ambiguous length error
+        needs_dense=True,  # Fix ambiguous length error
     )
 
 
@@ -228,21 +249,16 @@ def _lightgbm() -> ModelWrapper:
     from lightgbm import LGBMClassifier
 
     return ModelWrapper(
-        name='LightGBM',
-        model=LGBMClassifier(
-            is_unbalance=True,
-            random_state=42,
-            n_jobs=-1,
-            verbose=-1
-        ),
+        name="LightGBM",
+        model=LGBMClassifier(is_unbalance=True, random_state=42, n_jobs=-1, verbose=-1),
         param_grid={
-            'num_leaves': [31, 63, 127],
-            'n_estimators': [100, 300, 500],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'feature_fraction': [0.7, 0.8, 1.0],
-            'min_child_samples': [10, 20, 50],
+            "num_leaves": [31, 63, 127],
+            "n_estimators": [100, 300, 500],
+            "learning_rate": [0.01, 0.05, 0.1],
+            "feature_fraction": [0.7, 0.8, 1.0],
+            "min_child_samples": [10, 20, 50],
         },
-        needs_dense=True  # Fix ambiguous length error
+        needs_dense=True,  # Fix ambiguous length error
     )
 
 
@@ -251,20 +267,18 @@ def _catboost() -> ModelWrapper:
     from catboost import CatBoostClassifier
 
     return ModelWrapper(
-        name='CatBoost',
+        name="CatBoost",
         model=CatBoostClassifier(
-            auto_class_weights='Balanced',
-            random_state=42,
-            verbose=0
+            auto_class_weights="Balanced", random_state=42, verbose=0
         ),
         param_grid={
-            'iterations': [200, 500],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'depth': [4, 6, 8],
-            'l2_leaf_reg': [1, 3, 5],
+            "iterations": [200, 500],
+            "learning_rate": [0.01, 0.05, 0.1],
+            "depth": [4, 6, 8],
+            "l2_leaf_reg": [1, 3, 5],
         },
-        compatible_features=['dense_low', 'dense_high'],  # Tidak efisien untuk sparse
-        needs_dense=True
+        compatible_features=["dense_low", "dense_high"],  # Tidak efisien untuk sparse
+        needs_dense=True,
     )
 
 
@@ -273,19 +287,16 @@ def _logistic_regression() -> ModelWrapper:
     from sklearn.linear_model import LogisticRegression
 
     return ModelWrapper(
-        name='Logistic Regression',
+        name="Logistic Regression",
         model=LogisticRegression(
-            class_weight='balanced',
-            max_iter=1000,
-            random_state=42,
-            n_jobs=-1
+            class_weight="balanced", max_iter=1000, random_state=42, n_jobs=-1
         ),
         param_grid={
-            'C': [0.01, 0.1, 1, 10, 100],
-            'penalty': ['l2'],
-            'solver': ['lbfgs', 'saga'],
+            "C": [0.01, 0.1, 1, 10, 100],
+            "penalty": ["l2"],
+            "solver": ["lbfgs", "saga"],
         },
-        needs_dense=True  # Fix ambiguous length error
+        needs_dense=True,  # Fix ambiguous length error
     )
 
 
@@ -295,19 +306,15 @@ def _svm() -> ModelWrapper:
     from sklearn.calibration import CalibratedClassifierCV
 
     # CalibratedClassifierCV agar mendukung predict_proba
-    base_svm = LinearSVC(
-        class_weight='balanced',
-        max_iter=2000,
-        random_state=42
-    )
+    base_svm = LinearSVC(class_weight="balanced", max_iter=2000, random_state=42)
 
     return ModelWrapper(
-        name='SVM (LinearSVC)',
+        name="SVM (LinearSVC)",
         model=CalibratedClassifierCV(base_svm, cv=3),
         param_grid={
-            'estimator__C': [0.01, 0.1, 1, 10, 100],
+            "estimator__C": [0.01, 0.1, 1, 10, 100],
         },
-        needs_dense=True  # Paksa ke dense untuk menghindari error 'ambiguous length' pada CalibratedClassifierCV
+        needs_dense=True,  # Paksa ke dense untuk menghindari error 'ambiguous length' pada CalibratedClassifierCV
     )
 
 
@@ -316,12 +323,12 @@ def _naive_bayes_multinomial() -> ModelWrapper:
     from sklearn.naive_bayes import MultinomialNB
 
     return ModelWrapper(
-        name='Naive Bayes (Multinomial)',
+        name="Naive Bayes (Multinomial)",
         model=MultinomialNB(),
         param_grid={
-            'alpha': [0.01, 0.1, 0.5, 1.0, 2.0],
+            "alpha": [0.01, 0.1, 0.5, 1.0, 2.0],
         },
-        compatible_features=['sparse']  # Hanya TF-IDF, BM25
+        compatible_features=["sparse"],  # Hanya TF-IDF, BM25
     )
 
 
@@ -330,11 +337,11 @@ def _naive_bayes_gaussian() -> ModelWrapper:
     from sklearn.naive_bayes import GaussianNB
 
     return ModelWrapper(
-        name='Naive Bayes (Gaussian)',
+        name="Naive Bayes (Gaussian)",
         model=GaussianNB(),
         param_grid={},  # Tidak ada hyperparameter signifikan
-        compatible_features=['dense_low', 'dense_high'],
-        needs_dense=True
+        compatible_features=["dense_low", "dense_high"],
+        needs_dense=True,
     )
 
 
@@ -343,22 +350,22 @@ def _mlp() -> ModelWrapper:
     from sklearn.neural_network import MLPClassifier
 
     return ModelWrapper(
-        name='MLP',
+        name="MLP",
         model=MLPClassifier(
-            activation='relu',
-            solver='adam',
+            activation="relu",
+            solver="adam",
             batch_size=64,
             learning_rate_init=0.001,
             max_iter=100,
             early_stopping=True,
             validation_fraction=0.1,
-            random_state=42
+            random_state=42,
         ),
         param_grid={
-            'hidden_layer_sizes': [(256,), (256, 128), (512, 256, 128)],
-            'alpha': [0.0001, 0.001, 0.01],
+            "hidden_layer_sizes": [(256,), (256, 128), (512, 256, 128)],
+            "alpha": [0.0001, 0.001, 0.01],
         },
-        needs_dense=True
+        needs_dense=True,
     )
 
 
@@ -366,7 +373,8 @@ def _mlp() -> ModelWrapper:
 # Registry — Semua Models
 # ======================================================================
 
-def get_all_models(subset: str = 'priority') -> Dict[str, ModelWrapper]:
+
+def get_all_models(subset: str = "priority") -> Dict[str, ModelWrapper]:
     """
     Return dictionary of all model wrappers.
 
@@ -377,24 +385,24 @@ def get_all_models(subset: str = 'priority') -> Dict[str, ModelWrapper]:
     Returns:
         Dict[str, ModelWrapper]
     """
-    if subset == 'priority':
+    if subset == "priority":
         return {
-            'Decision Tree': _decision_tree(),
-            'Random Forest': _random_forest(),
-            'XGBoost': _xgboost(),
+            "Decision Tree": _decision_tree(),
+            "Random Forest": _random_forest(),
+            "XGBoost": _xgboost(),
         }
     else:
         return {
-            'Decision Tree': _decision_tree(),
-            'Random Forest': _random_forest(),
-            'XGBoost': _xgboost(),
-            'LightGBM': _lightgbm(),
-            'CatBoost': _catboost(),
-            'Logistic Regression': _logistic_regression(),
-            'SVM': _svm(),
-            'NB-Multinomial': _naive_bayes_multinomial(),
-            'NB-Gaussian': _naive_bayes_gaussian(),
-            'MLP': _mlp(),
+            "Decision Tree": _decision_tree(),
+            "Random Forest": _random_forest(),
+            "XGBoost": _xgboost(),
+            "LightGBM": _lightgbm(),
+            "CatBoost": _catboost(),
+            "Logistic Regression": _logistic_regression(),
+            "SVM": _svm(),
+            "NB-Multinomial": _naive_bayes_multinomial(),
+            "NB-Gaussian": _naive_bayes_gaussian(),
+            "MLP": _mlp(),
         }
 
 
@@ -407,12 +415,12 @@ def get_feature_type_for_extractor(extractor_name: str) -> str:
         'dense_low' untuk Word2Vec, GloVe, FastText (100-300D)
         'dense_high' untuk BERT, DistilBERT, RoBERTa (768D)
     """
-    sparse_extractors = {'TF-IDF', 'BM25'}
-    dense_high_extractors = {'DistilBERT', 'IndoBERT', 'BERT-IndoBERT', 'RoBERTa'}
+    sparse_extractors = {"TF-IDF", "BM25"}
+    dense_high_extractors = {"DistilBERT", "IndoBERT", "BERT-IndoBERT", "RoBERTa"}
 
     if extractor_name in sparse_extractors:
-        return 'sparse'
+        return "sparse"
     elif extractor_name in dense_high_extractors:
-        return 'dense_high'
+        return "dense_high"
     else:
-        return 'dense_low'
+        return "dense_low"
