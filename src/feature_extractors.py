@@ -722,7 +722,10 @@ def get_all_extractors(subset: str = "priority") -> dict:
             "GloVe": GloVeExtractor(),
             "FastText": FastTextExtractor(train_from_scratch=True),
             "Word2Vec": Word2VecExtractor(train_from_scratch=True),
-            "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
+            # "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
+            "IndoBERT": BERTExtractor(
+                model_name="indobenchmark/indobert-base-p1", pooling="cls"
+            ),
         }
     else:
         return {
