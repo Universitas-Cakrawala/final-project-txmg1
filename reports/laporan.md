@@ -2,9 +2,9 @@
 
 **ABSTRAK**
 
-Aplikasi M-Pajak (CoreTax) merupakan platform digital resmi Direktorat Jenderal Pajak yang ditujukan untuk memudahkan layanan perpajakan bagi masyarakat Indonesia. Ulasan pengguna pada Google Play Store dapat dimanfaatkan sebagai sumber data untuk mengukur persepsi publik terhadap kualitas layanan aplikasi. Penelitian ini menerapkan pendekatan *text mining* untuk klasifikasi sentimen tiga kelas, yaitu Positif, Netral, dan Negatif, dengan fokus pada perbandingan beberapa metode *word embedding* dan algoritma *machine learning*. Dataset akhir yang digunakan pada eksperimen terbaru berjumlah 609 ulasan yang telah diseimbangkan, masing-masing 203 ulasan untuk setiap kelas. Hasil eksperimen menunjukkan bahwa kombinasi **GloVe + XGBoost** memberikan performa terbaik dengan nilai **Weighted F1-Score 71,45%**, **Macro F1-Score 71,44%**, **akurasi 71,31%**, dan **ROC-AUC 0,8560**. Selain itu, analisis LDA menunjukkan bahwa keluhan pengguna didominasi oleh isu verifikasi, login, kerumitan proses, dan hambatan pendaftaran. Hasil ini menunjukkan bahwa representasi semantik berbasis embedding masih relevan untuk analisis sentimen layanan publik, terutama ketika evaluasi dilakukan pada dataset yang sudah diseimbangkan.
+Aplikasi M-Pajak (CoreTax) merupakan platform digital resmi Direktorat Jenderal Pajak yang ditujukan untuk memudahkan layanan perpajakan bagi masyarakat Indonesia. Ulasan pengguna pada Google Play Store dapat dimanfaatkan sebagai sumber data untuk mengukur persepsi publik terhadap kualitas layanan aplikasi. Penelitian ini menerapkan pendekatan *text mining* untuk klasifikasi sentimen tiga kelas, yaitu Positif, Netral, dan Negatif, dengan fokus pada perbandingan beberapa metode *word embedding* dan algoritma *machine learning*. Dataset akhir yang digunakan pada eksperimen terbaru berjumlah 609 ulasan yang telah diseimbangkan, masing-masing 203 ulasan untuk setiap kelas. Hasil eksperimen menunjukkan bahwa kombinasi **Word2Vec + XGBoost** memberikan performa terbaik dengan nilai **Weighted F1-Score 63,92%**, **Macro F1-Score 63,94%**, **akurasi 63,93%**, dan **ROC-AUC 0,8051**. Selain itu, analisis LDA menunjukkan bahwa keluhan pengguna didominasi oleh isu verifikasi, login, kerumitan proses, dan hambatan pendaftaran. Hasil ini menunjukkan bahwa representasi semantik berbasis word embedding tetap relevan untuk analisis sentimen layanan publik, dan Word2Vec merupakan pilihan yang cukup efektif dan efisien secara komputasi.
 
-**Kata Kunci**: Analisis Sentimen, CoreTax, GloVe, Word2Vec, FastText, XGBoost, LDA, Text Mining
+**Kata Kunci**: Analisis Sentimen, CoreTax, Word2Vec, GloVe, FastText, XGBoost, LDA, Text Mining
 
 ---
 
@@ -52,10 +52,10 @@ Setelah melalui tahapan preprocessing yang meliputi *case folding*, *noise remov
 
 Beberapa hasil preprocessing yang diperoleh adalah sebagai berikut:
 
-- Rata-rata jumlah token per ulasan: **8,96 token**
-- Median jumlah token per ulasan: **5 token**
-- Vocabulary hasil preprocessing: **1.527 kata unik**
-- Data kosong setelah preprocessing: **5 baris**
+- Rata-rata jumlah token per ulasan: **9,63 token**
+- Median jumlah token per ulasan: **6 token**
+- Vocabulary hasil preprocessing: **1.592 kata unik**
+- Data kosong setelah preprocessing: **7 baris**
 
 Contoh hasil preprocessing:
 
@@ -72,15 +72,18 @@ Tahapan preprocessing ini terbukti mampu mengurangi *noise*, menyeragamkan bentu
 
 ### B. Hasil Eksperimen Model
 
-Penelitian ini menguji beberapa kombinasi metode *feature extraction* dan algoritma *machine learning* pada dataset seimbang. Berdasarkan hasil eksperimen final yang digunakan pada analisis komparatif, tiga kombinasi terbaik ditunjukkan pada tabel berikut:
+Penelitian ini menguji beberapa kombinasi metode *feature extraction* dan algoritma *machine learning* pada dataset seimbang. Berdasarkan hasil eksperimen final yang digunakan pada analisis komparatif, enam kombinasi terbaik ditunjukkan pada tabel berikut:
 
-| Feature Extraction | Model | Accuracy | Weighted F1 | Macro F1 | ROC-AUC |
-|---|---|---:|---:|---:|---:|
-| GloVe | XGBoost | 71,31% | 0,7145 | 0,7144 | 0,8560 |
-| GloVe | Random Forest | 69,67% | 0,7002 | 0,6999 | 0,8479 |
-| Word2Vec | XGBoost | 63,93% | 0,6413 | 0,6413 | 0,7989 |
+| Rank | Feature Extraction | Model | Accuracy | Weighted F1 | Macro F1 | ROC-AUC |
+|---|---|---|---:|---:|---:|---:|
+| 1 | Word2Vec | XGBoost | 63,93% | 0,6392 | 0,6394 | 0,8051 |
+| 2 | Word2Vec | Random Forest | 62,30% | 0,6181 | 0,6184 | 0,8154 |
+| 3 | Word2Vec | Decision Tree | 57,38% | 0,5738 | 0,5737 | 0,7227 |
+| 4 | FastText | Random Forest | 52,46% | 0,5286 | 0,5283 | 0,6702 |
+| 5 | FastText | XGBoost | 52,46% | 0,5216 | 0,5220 | 0,7244 |
+| 6 | FastText | Decision Tree | 50,00% | 0,5064 | 0,5058 | 0,6416 |
 
-Dari hasil tersebut, kombinasi **GloVe + XGBoost** memberikan performa terbaik. Selisih antara Weighted F1 dan Macro F1 pada model terbaik juga sangat kecil, sehingga menunjukkan bahwa performa model relatif seimbang di seluruh kelas sentimen.
+Dari hasil tersebut, kombinasi **Word2Vec + XGBoost** memberikan performa terbaik dengan nilai Weighted F1 sebesar **0,6392** dan ROC-AUC **0,8051**. Hasil ini menunjukkan bahwa Word2Vec embedding, meskipun lebih sederhana dibandingkan GloVe, tetap mampu menangkap pola semantik yang efektif untuk klasifikasi sentimen pada dataset CoreTax.
 
 ![Grouped Bar F1](../results/figures/evaluation/grouped_bar_f1.png)
 *Gambar 4. Perbandingan Weighted F1-Score antar kombinasi fitur dan model.*
@@ -92,13 +95,13 @@ Dari hasil tersebut, kombinasi **GloVe + XGBoost** memberikan performa terbaik. 
 
 Berdasarkan hasil eksperimen, beberapa temuan penting adalah sebagai berikut:
 
-- **GloVe** menjadi representasi fitur terbaik pada eksperimen terbaru karena memberikan nilai Weighted F1 dan Macro F1 tertinggi.
-- **XGBoost** merupakan model dengan performa tertinggi pada kombinasi terbaik, walaupun membutuhkan waktu pelatihan lebih besar dibandingkan Decision Tree dan Random Forest.
-- **Random Forest** menunjukkan performa yang stabil, khususnya ketika dipadukan dengan GloVe, meskipun masih berada di bawah XGBoost.
-- **Word2Vec** tetap kompetitif, tetapi belum mampu melampaui GloVe pada konfigurasi akhir yang digunakan.
-- **FastText** menghasilkan performa paling rendah pada eksperimen ini, sehingga kurang optimal untuk dataset dan konfigurasi model yang digunakan.
+- **Word2Vec** menjadi representasi fitur terbaik pada eksperimen final karena menghasilkan Weighted F1 tertinggi sebesar **0,6392** ketika dikombinasikan dengan XGBoost.
+- **XGBoost** merupakan model yang paling konsisten memberikan performa tinggi, baik dengan Word2Vec maupun FastText. Model ini mampu menangkap kompleksitas pola sentimen dengan baik.
+- **Random Forest** menunjukkan performa yang stabil dan efisien, menjadi alternatif terbaik kedua dengan Weighted F1 **0,6181** untuk kombinasi Word2Vec.
+- **Decision Tree** menghasilkan performa yang lebih rendah (0,5738), menunjukkan bahwa model pohon keputusan tunggal kurang mampu menangkap pola non-linear dalam data sentimen.
+- **FastText** menghasilkan performa lebih rendah dibandingkan Word2Vec, dengan nilai Weighted F1 maksimal **0,5286** (Random Forest). Hal ini menunjukkan bahwa FastText kurang optimal untuk dataset ulasan CoreTax pada konfigurasi yang digunakan.
 
-Hal ini menunjukkan bahwa representasi semantik berbasis ko-occurence global seperti GloVe lebih efektif dalam menangkap pola sentimen ulasan CoreTax dibandingkan embedding lain pada konfigurasi eksperimen terbaru.
+Secara keseluruhan, hasil ini menunjukkan bahwa kombinasi Word2Vec + XGBoost merupakan pilihan optimal untuk klasifikasi sentimen ulasan CoreTax, memberikan keseimbangan yang baik antara performa dan efisiensi komputasi.
 
 ### D. Analisis Class Imbalance
 
@@ -106,21 +109,23 @@ Pada artefak eksperimen terbaru yang tersimpan di repositori, penanganan *class 
 
 Temuan utama dari kondisi dataset seimbang ini adalah sebagai berikut:
 
-- Nilai Weighted F1 dan Macro F1 pada model terbaik hampir identik, yaitu **0,7145** dan **0,7144**.
-- Kedekatan kedua metrik tersebut menunjukkan bahwa model terbaik tidak hanya baik secara keseluruhan, tetapi juga relatif konsisten di seluruh kelas.
+- Nilai Weighted F1 dan Macro F1 pada model terbaik hampir identik, yaitu **0,6392** dan **0,6394**.
+- Kedekatan kedua metrik tersebut menunjukkan bahwa model terbaik (Word2Vec + XGBoost) tidak hanya baik secara keseluruhan, tetapi juga relatif konsisten di seluruh kelas sentimen.
+- ROC-AUC sebesar **0,8051** menunjukkan bahwa model memiliki kemampuan diskriminasi yang baik antara kelas-kelas sentimen.
 - Evaluasi pada dataset seimbang membuat interpretasi performa menjadi lebih adil karena kelas minoritas tidak lagi tertekan oleh dominasi kelas tertentu.
 
 Dengan demikian, pada versi hasil terbaru, pembahasan *class imbalance* lebih tepat difokuskan pada keberhasilan penyusunan dataset seimbang sebagai dasar evaluasi yang lebih kredibel.
 
 ### E. Confusion Matrix Model Terbaik
 
-Artefak visual *confusion matrix* tidak tersimpan sebagai file terpisah pada hasil eksperimen terbaru. Meskipun demikian, performa model terbaik tetap dapat diinterpretasikan melalui konsistensi metrik evaluasi.
+Artefak visual *confusion matrix* tidak tersimpan sebagai file terpisah pada hasil eksperimen terbaru. Meskipun demikian, performa model terbaik (Word2Vec + XGBoost) dapat diinterpretasikan melalui konsistensi metrik evaluasi.
 
 Analisis yang dapat ditarik adalah sebagai berikut:
 
-- Model terbaik tidak menunjukkan gejala bias yang kuat terhadap satu kelas tertentu, karena nilai Weighted F1 dan Macro F1 hampir sama.
-- Kelas Netral tetap berpotensi menjadi kelas yang paling menantang, karena secara konseptual berada di antara opini positif dan negatif.
-- Untuk pelaporan lanjutan, pembuatan *confusion matrix* eksplisit disarankan agar *recall* per kelas dapat dilaporkan secara kuantitatif.
+- Model terbaik tidak menunjukkan gejala bias yang kuat terhadap satu kelas tertentu, karena nilai Weighted F1 (0,6392) dan Macro F1 (0,6394) hampir sama.
+- Kelas Netral tetap berpotensi menjadi kelas yang paling menantang, karena secara konseptual berada di antara opini positif dan negatif, dengan karakteristik teks yang ambigu.
+- ROC-AUC sebesar 0,8051 menunjukkan kemampuan diskriminasi yang baik, dengan kurva ROC berada jauh di atas garis diagonal acak (0,5).
+- Untuk pelaporan lanjutan, pembuatan *confusion matrix* eksplisit disarankan agar *recall* dan *precision* per kelas dapat dilaporkan secara kuantitatif.
 
 ### F. Topic Modeling (LDA)
 
