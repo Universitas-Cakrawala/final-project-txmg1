@@ -151,12 +151,19 @@ def run_experiments(
             print(f"\n   [{combo_idx}/{total_combos}] 🤖 {ext_name} + {model_name}")
 
             try:
+                # Convert sparse to dense if needed (untuk menghindari sklearn CV sparse array error)
+                X_train_fit = X_train
+                X_test_fit = X_test
+                if sp.issparse(X_train):
+                    X_train_fit = X_train.toarray()
+                    X_test_fit = X_test.toarray()
+
                 # Fit model
-                model_wrapper.fit(X_train, y_train, cv=cv, n_iter=n_iter)
+                model_wrapper.fit(X_train_fit, y_train, cv=cv, n_iter=n_iter)
 
                 # Predict
-                y_pred = model_wrapper.predict(X_test)
-                y_proba = model_wrapper.predict_proba(X_test)
+                y_pred = model_wrapper.predict(X_test_fit)
+                y_proba = model_wrapper.predict_proba(X_test_fit)
 
                 # Evaluate
                 metrics = evaluate_model(

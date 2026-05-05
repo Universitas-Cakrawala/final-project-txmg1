@@ -83,6 +83,8 @@ def measure_inference_time(model_wrapper, X_test, n_runs: int = 3) -> float:
     """
     Ukur rata-rata inference time per 1000 sampel (ms).
     """
+    import scipy.sparse as sp
+    
     times = []
     for _ in range(n_runs):
         start = time.time()
@@ -91,15 +93,11 @@ def measure_inference_time(model_wrapper, X_test, n_runs: int = 3) -> float:
         times.append(elapsed)
 
     avg_time = np.mean(times)
-    per_1000 = (
-        (
-            avg_time / len(X_test)
-            if hasattr(X_test, "__len__")
-            else avg_time / X_test.shape[0]
-        )
-        * 1000
-        * 1000
-    )  # ms per 1000
+    
+    # Get number of samples (handle both sparse dan dense matrix)
+    n_samples = X_test.shape[0] if hasattr(X_test, 'shape') else len(X_test)
+    
+    per_1000 = (avg_time / n_samples) * 1000 * 1000  # ms per 1000
 
     return round(per_1000, 2)
 

@@ -95,7 +95,7 @@ class ModelWrapper:
         Fit model dengan hyperparameter tuning.
 
         Args:
-            X_train: Feature matrix (sparse atau dense)
+            X_train: Feature matrix (sudah dikonversi ke dense jika perlu)
             y_train: Labels
             cv: Jumlah cross-validation folds
             n_iter: Jumlah iterasi random search
@@ -104,10 +104,8 @@ class ModelWrapper:
         Returns:
             self (fitted)
         """
-        # Konversi sparse ke dense jika diperlukan
+        # Jangan perlu konversi lagi, sudah dilakukan di experiment_runner
         X = X_train
-        if self.needs_dense and sp.issparse(X):
-            X = X.toarray()
 
         start_time = time.time()
 
@@ -120,7 +118,7 @@ class ModelWrapper:
                 scoring=scoring,
                 random_state=42,
                 n_jobs=-1,
-                error_score="raise",
+                error_score=0.0,
             )
 
             # Handle sample weights for XGBoost or others if needed
@@ -155,20 +153,14 @@ class ModelWrapper:
 
     def predict(self, X_test) -> np.ndarray:
         """Predict labels."""
-        X = X_test
-        if self.needs_dense and sp.issparse(X):
-            X = X.toarray()
-        return self.best_model.predict(X)
+        return self.best_model.predict(X_test)
 
     def predict_proba(self, X_test) -> Optional[np.ndarray]:
         """Predict probabilities (jika model mendukung)."""
-        X = X_test
-        if self.needs_dense and sp.issparse(X):
-            X = X.toarray()
         if hasattr(self.best_model, "predict_proba"):
-            return self.best_model.predict_proba(X)
+            return self.best_model.predict_proba(X_test)
         elif hasattr(self.best_model, "decision_function"):
-            return self.best_model.decision_function(X)
+            return self.best_model.decision_function(X_test)
         return None
 
     def _count_combinations(self) -> int:
@@ -200,7 +192,7 @@ def _decision_tree() -> ModelWrapper:
             "criterion": ["gini", "entropy"],
             "max_features": ["sqrt", "log2", None],
         },
-        needs_dense=True,  # Fix ambiguous length error
+        needs_dense=False,  # Conversion sudah dilakukan di experiment_runner
     )
 
 
@@ -219,7 +211,7 @@ def _random_forest() -> ModelWrapper:
             "max_features": ["sqrt", "log2"],
             "min_samples_leaf": [1, 2, 4],
         },
-        needs_dense=True,  # Fix ambiguous length error
+        needs_dense=False,  # Conversion sudah dilakukan di experiment_runner
     )
 
 
@@ -240,7 +232,7 @@ def _xgboost() -> ModelWrapper:
             "colsample_bytree": [0.7, 0.8, 1.0],
             "reg_alpha": [0, 0.1, 1.0],
         },
-        needs_dense=True,  # Fix ambiguous length error
+        needs_dense=False,  # Conversion sudah dilakukan di experiment_runner
     )
 
 

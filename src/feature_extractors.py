@@ -285,7 +285,7 @@ class GloVeExtractor(BaseExtractor):
 
     def __init__(
         self,
-        vectors_path: str = "data/embeddings/cc.id.300.vec",
+        vectors_path: str = "../data/embeddings/cc.id.300.vec",
         dim: int = 300,
         max_vocab: int = 200000,
     ):
@@ -722,13 +722,14 @@ def get_all_extractors(subset: str = "priority") -> dict:
             "GloVe": GloVeExtractor(),
             "FastText": FastTextExtractor(train_from_scratch=True),
             "Word2Vec": Word2VecExtractor(train_from_scratch=True),
+            "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
         }
     else:
         return {
             "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
             "BM25": BM25Extractor(),
             "Word2Vec": Word2VecExtractor(vector_size=100, train_from_scratch=True),
-            "GloVe": GloVeExtractor(vectors_path="data/embeddings/cc.id.300.vec"),
+            "GloVe": GloVeExtractor(vectors_path="../data/embeddings/cc.id.300.vec"),
             "FastText": FastTextExtractor(vector_size=100, train_from_scratch=True),
             "DistilBERT": DistilBERTExtractor(),
             "IndoBERT": BERTExtractor(
