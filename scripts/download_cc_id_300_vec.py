@@ -21,7 +21,7 @@ from pathlib import Path
 # ==================== Configuration ====================
 
 # Output settings
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "processed")
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "embeddings")
 OUTPUT_FILE = "cc.id.300.vec"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, OUTPUT_FILE)
 
@@ -205,7 +205,7 @@ from gensim.models import KeyedVectors
 
 # Load model FastText
 model = KeyedVectors.load_word2vec_format(
-    'data/processed/cc.id.300.vec',
+    'data/embeddings/cc.id.300.vec',
     binary=False
 )
 

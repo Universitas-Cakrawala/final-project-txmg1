@@ -25,7 +25,7 @@ python scripts/download_cc_id_300_vec.py
 - ✅ User-friendly interface dalam Bahasa Indonesia
 
 **Output:**
-- 📁 File: `data/processed/cc.id.300.vec` (4.21GB)
+- 📁 File: `data/embeddings/cc.id.300.vec` (4.21GB)
 - ⏱️ Waktu: ~7-8 menit (tergantung kecepatan internet)
 - 📊 Ukuran: 4.21 GB (pre-trained Indonesian FastText embeddings)
 
@@ -60,25 +60,52 @@ bash scripts/download_cc_id_300_vec.sh
 
 ## 🚀 Quick Start
 
-### Opsi 1: Python Script (Recommended)
+### Opsi 1: Python Script (Most Recommended)
 
 ```bash
+# Dari root project
 python scripts/download_cc_id_300_vec.py
+
+# atau dari folder scripts
+cd scripts
+python download_cc_id_300_vec.py
 ```
 
-Proses:
-1. ✅ Otomatis membuat folder `data/processed` jika belum ada
-2. ✅ Download dari HuggingFace
-3. ✅ Verifikasi ukuran file
-4. ✅ Siap digunakan
+**Keuntungan:**
+- ✅ Progress bar yang detail
+- ✅ Verifikasi otomatis
+- ✅ Handling error yang bagus
+- ✅ Interface user-friendly dalam Bahasa Indonesia
+- ✅ **Tidak perlu `chmod +x`**
 
-### Opsi 2: Bash Script
+---
+
+### Opsi 2: Bash Script dengan `bash` command
 
 ```bash
+# Dari root project
 bash scripts/download_cc_id_300_vec.sh
 ```
 
-Proses sama dengan Python script, tapi menggunakan sistem tools (curl/wget).
+**Keuntungan:**
+- ✅ Tidak perlu Python
+- ✅ Lightweight
+- ✅ Menggunakan curl atau wget
+- ✅ **Tidak perlu `chmod +x`**
+
+---
+
+### Opsi 3: Bash Script langsung (butuh chmod)
+
+```bash
+# Pertama kali saja
+chmod +x scripts/download_cc_id_300_vec.sh
+
+# Kemudian jalankan
+./scripts/download_cc_id_300_vec.sh
+```
+
+**Catatan:** `chmod +x` hanya diperlukan untuk opsi ini (menjalankan langsung dengan `./`).
 
 ---
 
@@ -93,7 +120,7 @@ Proses sama dengan Python script, tapi menggunakan sistem tools (curl/wget).
 | **Vocabulary** | ~2.3 million words |
 | **Language** | Indonesian + other languages |
 | **Source** | HuggingFace Hub - restyaaa/OptimasiFasttextGridSearch |
-| **Output Location** | `data/processed/cc.id.300.vec` |
+| **Output Location** | `data/embeddings/cc.id.300.vec` |
 | **Download Speed** | ~9-10 MB/s (tergantung koneksi) |
 | **Download Time** | ~7-8 menit |
 
@@ -108,7 +135,7 @@ from gensim.models import KeyedVectors
 
 # Load model
 model = KeyedVectors.load_word2vec_format(
-    'data/processed/cc.id.300.vec',
+    'data/embeddings/cc.id.300.vec',
     binary=False
 )
 
@@ -139,7 +166,7 @@ from gensim.models import KeyedVectors
 # Load pre-trained model
 try:
     vectors = KeyedVectors.load_word2vec_format(
-        'data/processed/cc.id.300.vec',
+        'data/embeddings/cc.id.300.vec',
         binary=False
     )
     print(f"✅ Loaded FastText model")
@@ -181,7 +208,7 @@ bash scripts/download_cc_id_300_vec.sh
 ```bash
 # Script akan bertanya apakah mau menghapus
 # Pilih 'y' untuk menghapus dan unduh ulang
-rm data/processed/cc.id.300.vec
+rm data/embeddings/cc.id.300.vec
 python scripts/download_cc_id_300_vec.py
 ```
 
@@ -221,7 +248,7 @@ chmod +x scripts/download_cc_id_300_vec.sh
 
 - [ ] Run `python scripts/download_cc_id_300_vec.py`
 - [ ] Wait for download to complete (~7-8 minutes)
-- [ ] Verify `data/processed/cc.id.300.vec` exists
+- [ ] Verify `data/embeddings/cc.id.300.vec` exists
 - [ ] File size should be ~4.21GB
 - [ ] Ready to use in notebooks!
 

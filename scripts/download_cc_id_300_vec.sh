@@ -13,7 +13,7 @@
 # Output settings
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-OUTPUT_DIR="$PROJECT_DIR/data/processed"
+OUTPUT_DIR="$PROJECT_DIR/data/embeddings"
 OUTPUT_FILE="cc.id.300.vec"
 OUTPUT_PATH="$OUTPUT_DIR/$OUTPUT_FILE"
 
@@ -168,7 +168,7 @@ from gensim.models import KeyedVectors
 
 # Load model FastText
 model = KeyedVectors.load_word2vec_format(
-    'data/processed/cc.id.300.vec',
+    'data/embeddings/cc.id.300.vec',
     binary=False
 )
 

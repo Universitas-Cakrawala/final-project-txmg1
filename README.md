@@ -22,6 +22,17 @@ Proyek ini bertujuan untuk melakukan analisis sentimen ternary (Positif, Netral,
 2. **Pilih Kernel**:
    Pastikan Anda menggunakan kernel Python yang benar (disarankan menggunakan environment `.venv` proyek ini).
 
+3. **Download FastText Pre-trained Embedding**:
+   Sebelum menjalankan alur kerja, Anda harus mengunduh file embedding GloVe (cc.id.300.vec):
+
+   ```bash
+   python scripts/download_cc_id_300_vec.py
+   ```
+
+   File ini (~4.21GB) akan disimpan di `data/embeddings/cc.id.300.vec` dan digunakan untuk feature extraction.
+   
+   **Catatan:** Tidak perlu `chmod +x` untuk menjalankan dengan command `python` atau `bash`. Hanya diperlukan jika ingin menjalankan langsung dengan `./scripts/download_cc_id_300_vec.sh`.
+
 ---
 
 ## 🚀 Alur Kerja (Step-by-Step)

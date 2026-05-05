@@ -68,7 +68,7 @@ bash scripts/download_cc_id_300_vec.sh
 | **Type** | FastText Word Embeddings |
 | **Dimensions** | 300 |
 | **Source** | HuggingFace - restyaaa/OptimasiFasttextGridSearch |
-| **Output** | `data/processed/cc.id.300.vec` |
+| **Output** | `data/embeddings/cc.id.300.vec` |
 | **Speed** | ~9-10 MB/s |
 | **Time** | ~7-8 menit |
 
@@ -85,7 +85,7 @@ Ketika Anda menjalankan script, berikut prosesnya:
    ├─ Jika tidak → gunakan file yang ada
 
 2. Mulai download
-   ├─ Buat folder data/processed jika belum ada
+   ├─ Buat folder data/embeddings jika belum ada
    ├─ Tampilkan progress bar real-time
    └─ Tampilkan kecepatan dan estimasi waktu
 
@@ -107,7 +107,7 @@ Ketika Anda menjalankan script, berikut prosesnya:
 🌐 FastText Indonesian Vectors Downloader
 ======================================================================
 
-📁 Output directory: /home/titan/github/final-project-txmg1/data/processed
+📁 Output directory: /home/titan/github/final-project-txmg1/data/embeddings
 📄 File: cc.id.300.vec
 📊 Ukuran yang diharapkan: ~4.21GB
 
@@ -133,12 +133,12 @@ from gensim.models import KeyedVectors
 
 # Load model FastText
 model = KeyedVectors.load_word2vec_format(
-    'data/processed/cc.id.300.vec',
+    'data/embeddings/cc.id.300.vec',
     binary=False
 )
 ...
 
-📂 Lokasi file: /home/titan/github/final-project-txmg1/data/processed/cc.id.300.vec
+📂 Lokasi file: /home/titan/github/final-project-txmg1/data/embeddings/cc.id.300.vec
 
 ✨ Siap digunakan dalam project!
 ```
@@ -164,7 +164,7 @@ python scripts/download_cc_id_300_vec.py
 ### Jika File Rusak
 ```bash
 # Hapus dan coba unduh lagi
-rm data/processed/cc.id.300.vec
+rm data/embeddings/cc.id.300.vec
 python scripts/download_cc_id_300_vec.py
 ```
 
@@ -185,7 +185,7 @@ from gensim.models import KeyedVectors
 
 # Load model
 model = KeyedVectors.load_word2vec_format(
-    'data/processed/cc.id.300.vec',
+    'data/embeddings/cc.id.300.vec',
     binary=False
 )
 
@@ -204,7 +204,7 @@ X_train_fasttext = extract_fasttext_features(
 - [ ] Verifikasi 3 files ada di folder `scripts/`
 - [ ] Jalankan script: `python scripts/download_cc_id_300_vec.py`
 - [ ] Tunggu download selesai (~7-8 menit)
-- [ ] Verifikasi file di `data/processed/cc.id.300.vec` (4.21GB)
+- [ ] Verifikasi file di `data/embeddings/cc.id.300.vec` (4.21GB)
 - [ ] Gunakan di Notebook 02
 
 ---
@@ -217,7 +217,7 @@ scripts/
 ├── download_cc_id_300_vec.sh  (Alternative)
 └── README.md                  (Documentation)
 
-data/processed/
+data/embeddings/
 └── cc.id.300.vec              (Output file, setelah download)
 ```
 
