@@ -95,9 +95,11 @@ Berdasarkan eksperimen pada dataset biner yang diseimbangkan:
 
 | Rank | Feature Extractor | Model | Accuracy | F1-Score |
 | :--- | :--- | :--- | :--- | :--- |
-| **1** | **TF-IDF (Word+Char)** | **Logistic Regression** | **90.6%** | **0.906** |
+| **1** | **TF-IDF** | **Logistic Regression** | **90.6%** | **0.906** |
 | 2 | Word2Vec | XGBoost | 90.3% | 0.903 |
 | 3 | TF-IDF | XGBoost | 90.3% | 0.903 |
+| 4 | Word2Vec | Random Forest | 90.3% | 0.903 |
+| 5 | TF-IDF | Random Forest | 89.4% | 0.894 |
 
 **Insight Utama:** Kombinasi **TF-IDF** dan **Logistic Regression** terbukti paling efisien (cepat dan akurasi tertinggi) untuk karakteristik teks ulasan aplikasi CoreTax.
 
