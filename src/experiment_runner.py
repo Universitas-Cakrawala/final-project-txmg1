@@ -2,7 +2,8 @@
 experiment_runner.py — Loop Eksperimen Otomatis untuk Kombinasi Fitur × Model
 ==============================================================================
 Menjalankan semua kombinasi valid antara feature extractors dan model ML,
-mencatat metrics ke results/comparison_table.csv.
+mencatat metrics ke results/comparison_table.csv dan results/comparison_table_new.csv
+    jika type='new' maka akan di tambahkan _new pada nama file.
 
 Usage:
     from src.experiment_runner import run_experiments
@@ -36,6 +37,7 @@ def run_experiments(
     cv: int = 3,
     save_features: bool = True,
     save_dir: str = "results",
+    type: str = "new",
 ) -> pd.DataFrame:
     """
     Jalankan semua kombinasi feature extractor × model ML.
@@ -208,9 +210,15 @@ def run_experiments(
 
     # Generate comparison table
     print("\n" + "=" * 70)
-    comparison_df = generate_comparison_table(
-        all_results, save_path=os.path.join(save_dir, "comparison_table.csv")
-    )
+
+    if type == "new":
+        comparison_df = generate_comparison_table(
+            all_results, save_path=os.path.join(save_dir, "comparison_table_new.csv")
+        )
+    else:
+        comparison_df = generate_comparison_table(
+            all_results, save_path=os.path.join(save_dir, "comparison_table.csv")
+        )
 
     print_top_results(comparison_df, n=10)
 
