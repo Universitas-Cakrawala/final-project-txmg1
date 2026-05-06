@@ -36,3 +36,6 @@ wordcloud>=1.9.0
 # Jupyter
 jupyter>=1.0.0
 ipykernel>=6.25.0
+
+# Google scraper
+google-play-scraper>=0.1.0

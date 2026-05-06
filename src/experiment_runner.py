@@ -69,7 +69,15 @@ def run_experiments(
     # Persiapkan data
     texts = df[text_col].fillna("").tolist()
     labels = df[label_col].values
-    target_names = ["Negatif", "Netral", "Positif"]
+
+    # Auto-detect binary vs ternary classification
+    unique_labels = sorted(np.unique(labels))
+    if len(unique_labels) == 2:
+        target_names = ["Negatif", "Positif"]
+        print("   📌 Mode: BINARY Classification (Negatif vs Positif)")
+    else:
+        target_names = ["Negatif", "Netral", "Positif"]
+        print("   📌 Mode: TERNARY Classification (Negatif/Netral/Positif)")
 
     # Train-test split (stratified)
     texts_train, texts_test, y_train, y_test = train_test_split(
@@ -154,7 +162,7 @@ def run_experiments(
                 # Convert sparse to dense if needed (untuk menghindari sklearn CV sparse array error)
                 X_train_fit = X_train
                 X_test_fit = X_test
-                if sp.issparse(X_train):
+                if getattr(model_wrapper, "needs_dense", False) and sp.issparse(X_train):
                     X_train_fit = X_train.toarray()
                     X_test_fit = X_test.toarray()
 
@@ -167,7 +175,7 @@ def run_experiments(
 
                 # Evaluate
                 metrics = evaluate_model(
-                    y_test, y_pred, y_proba, labels=[0, 1, 2], target_names=target_names
+                    y_test, y_pred, y_proba, labels=unique_labels, target_names=target_names
                 )
 
                 # Inference time

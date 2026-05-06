@@ -89,7 +89,7 @@ class ModelWrapper:
         y_train,
         cv: int = 3,
         n_iter: int = 20,
-        scoring: str = "f1_weighted",
+        scoring: str = "accuracy",
     ) -> "ModelWrapper":
         """
         Fit model dengan hyperparameter tuning.
@@ -118,33 +118,14 @@ class ModelWrapper:
                 scoring=scoring,
                 random_state=42,
                 n_jobs=-1,
-                error_score=0.0,
+                error_score="raise",
             )
 
-            # Handle sample weights for XGBoost or others if needed
-            fit_params = {}
-            if self.name == "XGBoost":
-                from sklearn.utils.class_weight import compute_sample_weight
-
-                sample_weights = compute_sample_weight(
-                    class_weight="balanced", y=y_train
-                )
-                fit_params["sample_weight"] = sample_weights
-
-            search.fit(X, y_train, **fit_params)
+            search.fit(X, y_train)
             self.best_model = search.best_estimator_
             self.best_params = search.best_params_
         else:
-            fit_params = {}
-            if self.name == "XGBoost":
-                from sklearn.utils.class_weight import compute_sample_weight
-
-                sample_weights = compute_sample_weight(
-                    class_weight="balanced", y=y_train
-                )
-                fit_params["sample_weight"] = sample_weights
-
-            self.model.fit(X, y_train, **fit_params)
+            self.model.fit(X, y_train)
             self.best_model = self.model
             self.best_params = {}
 
@@ -185,7 +166,7 @@ def _decision_tree() -> ModelWrapper:
 
     return ModelWrapper(
         name="Decision Tree",
-        model=DecisionTreeClassifier(class_weight="balanced", random_state=42),
+        model=DecisionTreeClassifier(class_weight=None, random_state=42),
         param_grid={
             "max_depth": [5, 10, 20, None],
             "min_samples_split": [2, 5, 10],
@@ -202,9 +183,7 @@ def _random_forest() -> ModelWrapper:
 
     return ModelWrapper(
         name="Random Forest",
-        model=RandomForestClassifier(
-            class_weight="balanced", random_state=42, n_jobs=-1
-        ),
+        model=RandomForestClassifier(class_weight=None, random_state=42, n_jobs=-1),
         param_grid={
             "n_estimators": [100, 200, 500],
             "max_depth": [10, 20, None],
@@ -242,7 +221,9 @@ def _lightgbm() -> ModelWrapper:
 
     return ModelWrapper(
         name="LightGBM",
-        model=LGBMClassifier(is_unbalance=True, random_state=42, n_jobs=-1, verbose=-1),
+        model=LGBMClassifier(
+            is_unbalance=False, random_state=42, n_jobs=-1, verbose=-1
+        ),
         param_grid={
             "num_leaves": [31, 63, 127],
             "n_estimators": [100, 300, 500],
@@ -281,32 +262,32 @@ def _logistic_regression() -> ModelWrapper:
     return ModelWrapper(
         name="Logistic Regression",
         model=LogisticRegression(
-            class_weight="balanced", max_iter=1000, random_state=42, n_jobs=-1
+            class_weight=None, max_iter=1000, random_state=42, n_jobs=-1
         ),
         param_grid={
             "C": [0.01, 0.1, 1, 10, 100],
             "penalty": ["l2"],
             "solver": ["lbfgs", "saga"],
         },
-        needs_dense=True,  # Fix ambiguous length error
     )
 
 
 def _svm() -> ModelWrapper:
-    """Prompt 4.4 — LinearSVC."""
-    from sklearn.svm import LinearSVC
-    from sklearn.calibration import CalibratedClassifierCV
+    """Prompt 4.4 — SVM with multiple kernels."""
+    from sklearn.svm import SVC
 
-    # CalibratedClassifierCV agar mendukung predict_proba
-    base_svm = LinearSVC(class_weight="balanced", max_iter=2000, random_state=42)
+    base_svm = SVC(
+        kernel="linear", probability=True, class_weight=None, random_state=42
+    )
 
     return ModelWrapper(
-        name="SVM (LinearSVC)",
-        model=CalibratedClassifierCV(base_svm, cv=3),
+        name="SVM",
+        model=base_svm,
         param_grid={
-            "estimator__C": [0.01, 0.1, 1, 10, 100],
+            "C": [0.01, 0.1, 1, 10],
+            "kernel": ["linear", "rbf"],
         },
-        needs_dense=True,  # Paksa ke dense untuk menghindari error 'ambiguous length' pada CalibratedClassifierCV
+        needs_dense=False,
     )
 
 
@@ -361,6 +342,29 @@ def _mlp() -> ModelWrapper:
     )
 
 
+def _voting_classifier() -> ModelWrapper:
+    """Voting Classifier Ensemble (LR + LGBM + SVM)."""
+    from sklearn.ensemble import VotingClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.svm import SVC
+    from lightgbm import LGBMClassifier
+
+    lr = LogisticRegression(class_weight=None, max_iter=1000, random_state=42)
+    lgbm = LGBMClassifier(is_unbalance=False, random_state=42, verbose=-1)
+    svm = SVC(kernel="rbf", probability=True, class_weight=None, random_state=42)
+
+    voting_model = VotingClassifier(
+        estimators=[("lr", lr), ("lgbm", lgbm), ("svm", svm)], voting="soft", n_jobs=-1
+    )
+
+    return ModelWrapper(
+        name="Voting Classifier",
+        model=voting_model,
+        param_grid={},  # Terlalu kompleks untuk dituning, gunakan default kuat
+        needs_dense=False,
+    )
+
+
 # ======================================================================
 # Registry — Semua Models
 # ======================================================================
@@ -379,9 +383,10 @@ def get_all_models(subset: str = "priority") -> Dict[str, ModelWrapper]:
     """
     if subset == "priority":
         return {
-            "Decision Tree": _decision_tree(),
+            "Logistic Regression": _logistic_regression(),
             "Random Forest": _random_forest(),
             "XGBoost": _xgboost(),
+            "Decision Tree": _decision_tree(),
         }
     else:
         return {
@@ -407,7 +412,7 @@ def get_feature_type_for_extractor(extractor_name: str) -> str:
         'dense_low' untuk Word2Vec, GloVe, FastText (100-300D)
         'dense_high' untuk BERT, DistilBERT, RoBERTa (768D)
     """
-    sparse_extractors = {"TF-IDF", "BM25"}
+    sparse_extractors = {"TF-IDF", "TF-IDF (Char+Word)", "BM25"}
     dense_high_extractors = {"DistilBERT", "IndoBERT", "BERT-IndoBERT", "RoBERTa"}
 
     if extractor_name in sparse_extractors:

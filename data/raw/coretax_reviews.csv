@@ -1,4 +1,5 @@
 ﻿user_name,rating,date,review_text,likes,app_version
+Pengguna Google,1,2026-05-05 03:42:50,ahlinya IT,0,3.0.9
 Pengguna Google,1,2026-05-04 09:07:50,herman kenapa cuma verivikasi otp nomor telepon . musti pake pulsa? sekelas negara yang butuh pajak tapi gak modal bener dah udah digaji tapi gak profesional,0,3.0.9
 Pengguna Google,4,2026-05-03 20:25:50,kenapa ya gk bisa swafoto,0,
 Pengguna Google,1,2026-05-03 14:21:32,"Harus diperbaiki lagi sih ini. Tolong dong, ngga mungkin se abai itu para pekerja dan pengembang aplikasi. Dari tahun kemarin masa masih gini-gini aja. Malah makin ga jelas.",0,
@@ -5934,7 +5935,6 @@ Pengguna Google,1,2023-05-12 09:43:16,Susah bgt deh pokok nya,0,
 Pengguna Google,5,2023-05-11 16:05:41,Luar biasa,0,
 Pengguna Google,1,2023-05-11 11:11:23,"kocak, aplikasi buat pajak crash force close. pajak masyarakat gunakan lah buat perbaikan penyempurnaan pelayanan masyarakat. kita masyarakat wajib bayar pajak, tapi aplikasi nya begini??? ga bisa dipake.",0,
 Pengguna Google,5,2023-05-10 11:08:33,Mantap cuman belum lengkap,0,
-Pengguna Google,5,2023-05-10 02:40:27,Mantap,0,
 Pengguna Google,2,2023-05-09 20:24:35,Kurang praktis,0,1.2.3
 Pengguna Google,1,2023-05-09 14:30:48,"A. Pengambilan EFIN harus datang sendiri ke KPP asal. 1. Apa dikiranya semua KPP itu mudah dijangkau, terutama bagi rakyat pedalaman dengan kondisi jalanan hancur, yang KPP terdekatnya berada di ibukota kabupaten lain? Contoh: Rakyat kabupaten Landak, Kalbar, harus ke KPP Sanggau. 2. Apa dikiranya semua orang punya waktu untuk datang sendiri ke KPP asal? Contoh: Warga Kulonprogo, DIY, pindah domisili jadi warga Kab. Bandung, Jabar, dan belum ada waktu pulkam bertahun-tahun. B. Kerja 2x",0,1.1.0
 Pengguna Google,1,2023-05-09 12:56:51,Masuk akun tidak bisa,0,1.2.3
@@ -7191,7 +7191,7 @@ Antum Ana,1,2026-04-28 14:50:16,"parah bgt ni aplikasi, buat verifikasi gagal te
 Hajar Purnomo Sulaeman,5,2026-04-22 12:17:14,Good,0,
 Ryesvo Armopa,1,2026-04-19 18:02:50,cannoy login everytime i try to login,1,3.0.9
 Shendi,1,2026-04-18 13:34:31,1.Login > Error 2.Lupa sandi > Error 3.Aktivasi akun > Error 4.Nyoba registrasi akun > NIK sudah terdaftar Nyusahin emang 👎🏼,0,3.0.9
-Bonni Rambatan,1,2026-04-18 10:38:28,"It's nothing more than an app that asks for your private data, photos, and location, then returns a collection of generic error messages.",4,3.0.9
+Bonni Rambatan,1,2026-04-18 10:38:28,"It's nothing more than an app that asks for your private data, photos, and location, then returns a collection of generic error messages.",5,3.0.9
 Akhdan Saputra,1,2026-04-17 23:15:45,"wujud aseli program 1,3 triliun. sering ga bisa akses. apcb",0,3.0.9
 M Ardiansyah Eka Putra,1,2026-04-16 14:10:31,"aplikasi ampas, update pun percuma tetep aja banyak minusnya.. gak usah di bikin lah kalau ujungnya harus offline",0,3.0.9
 Ibrahim Saleh,5,2026-04-16 10:55:25,menjadi alternatif yg bermanfaat,0,3.0.9
@@ -7428,7 +7428,7 @@ Irfan Dani Syahputra,1,2025-03-05 14:39:32,Lama kali verif email,2,2.0.3
 Nuri Selamet,1,2025-03-05 10:48:21,Waktu saya banyak terbuang hanya untuk mencoba masuk aplikasi. Coba diperbaiki.,0,
 hacahyani,1,2025-03-05 10:29:30,Login minta kode OTP yg berlaku cuma 2 jam. Baru dikirimnya 5 jam kemudian. Kocak lu.,0,2.0.3
 Kevin Aldava,1,2025-03-05 10:10:05,"koe nyuruh bayar pajak tapi bikin apk pajak aja ga becus anjir,, login aja susah betul",0,2.0.3
-Fayde Real,1,2025-03-05 07:06:52,Aplikasi lemot,0,
+Fayde Geus,1,2025-03-05 07:06:52,Aplikasi lemot,0,
 AKA ROMERO,3,2025-03-05 00:22:24,Pengitiman OTP lama. Sampai batas waktu kode habis. Bisa berjam-jam,0,2.0.3
 Bakpao Daging,1,2025-03-04 23:33:53,aplikasi bodat! apa sama biayanya dgn aplikasi coretax juga?! gk ada beresnya..berulang kali minta tolen masuk ke email lama sekali. itupun sesudah email dapat tokenmya INVALID! uji kesabaran kali memang mencoba apps djp ini. webnya juga sama parahnya! minta tolen menunggu email lamaaaaa.,0,
 Puswita C.,1,2025-03-04 21:23:18,"Lupa efin, terus ktnya bakal dikirim email utk kode verif. Nyatanya engga ada samsek. App nya jelek. Masa app pemerintah gini",0,

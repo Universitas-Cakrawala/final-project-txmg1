@@ -72,7 +72,7 @@ class TFIDFExtractor(BaseExtractor):
 
     def __init__(
         self,
-        max_features: int = 10000,
+        max_features: int = 15000,
         ngram_range: tuple = (1, 2),
         min_df: int = 2,
         max_df: float = 0.95,
@@ -115,6 +115,72 @@ class TFIDFExtractor(BaseExtractor):
             return []
         feature_names = self.vectorizer.get_feature_names_out()
         idf_scores = self.vectorizer.idf_
+        top_indices = np.argsort(idf_scores)[::-1][:n]
+        return [(feature_names[i], idf_scores[i]) for i in top_indices]
+
+
+class TFIDFCharWordExtractor(BaseExtractor):
+    """
+    Kombinasi TF-IDF Word N-Grams dan Char N-Grams.
+    Sangat ampuh untuk menangani typo dan bahasa gaul/slang di review aplikasi.
+    Output: sparse matrix.
+    """
+
+    def __init__(
+        self,
+        word_max_features: int = 10000,
+        char_max_features: int = 10000,
+    ):
+        super().__init__(name="TF-IDF (Char+Word)")
+        self.word_max_features = word_max_features
+        self.char_max_features = char_max_features
+        self.vectorizer = None
+
+    def fit_transform(self, train_texts, test_texts):
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.pipeline import FeatureUnion
+
+        word_vec = TfidfVectorizer(
+            analyzer='word',
+            ngram_range=(1, 2),
+            max_features=self.word_max_features,
+            sublinear_tf=True
+        )
+        char_vec = TfidfVectorizer(
+            analyzer='char_wb',
+            ngram_range=(3, 5),
+            max_features=self.char_max_features,
+            sublinear_tf=True
+        )
+
+        self.vectorizer = FeatureUnion([
+            ('word', word_vec),
+            ('char', char_vec)
+        ])
+
+        X_train = self.vectorizer.fit_transform(train_texts)
+        X_test = self.vectorizer.transform(test_texts)
+        self._is_fitted = True
+
+        print(
+            f"   TF-IDF (Char+Word): "
+            f"shape=({X_train.shape[0]}, {X_train.shape[1]})"
+        )
+
+        return X_train, X_test
+
+    def get_feature_type(self):
+        return "sparse"
+
+    def get_top_terms(self, n: int = 20) -> list:
+        """Return top N terms dari komponen Word TF-IDF."""
+        if not self._is_fitted:
+            return []
+        
+        # Ambil transformer 'word' dari FeatureUnion
+        word_vec = dict(self.vectorizer.transformer_list)['word']
+        feature_names = word_vec.get_feature_names_out()
+        idf_scores = word_vec.idf_
         top_indices = np.argsort(idf_scores)[::-1][:n]
         return [(feature_names[i], idf_scores[i]) for i in top_indices]
 
@@ -201,8 +267,8 @@ class Word2VecExtractor(BaseExtractor):
 
     def __init__(
         self,
-        vector_size: int = 100,
-        window: int = 5,
+        vector_size: int = 200,
+        window: int = 7,
         min_count: int = 2,
         pretrained_path: Optional[str] = None,
         train_from_scratch: bool = True,
@@ -235,7 +301,7 @@ class Word2VecExtractor(BaseExtractor):
                 window=self.window,
                 min_count=self.min_count,
                 workers=4,
-                epochs=20,
+                epochs=50,
                 sg=1,  # Skip-gram (lebih baik untuk rare words)
             )
             self.model = self.model.wv
@@ -256,17 +322,23 @@ class Word2VecExtractor(BaseExtractor):
         return X_train, X_test
 
     def _texts_to_vectors(self, tokenized_texts):
-        """Mean pooling of word vectors."""
+        """Enriched pooling: concatenate [mean, max, min, std] of word vectors."""
         dim = (
             self.model.vector_size
             if hasattr(self.model, "vector_size")
             else self.vector_size
         )
-        vectors = np.zeros((len(tokenized_texts), dim))
+        vectors = np.zeros((len(tokenized_texts), dim * 4))
         for i, tokens in enumerate(tokenized_texts):
             valid_vectors = [self.model[t] for t in tokens if t in self.model]
             if valid_vectors:
-                vectors[i] = np.mean(valid_vectors, axis=0)
+                vecs = np.array(valid_vectors)
+                vectors[i] = np.concatenate([
+                    np.mean(vecs, axis=0),
+                    np.max(vecs, axis=0),
+                    np.min(vecs, axis=0),
+                    np.std(vecs, axis=0),
+                ])
         return vectors
 
 
@@ -350,14 +422,20 @@ class GloVeExtractor(BaseExtractor):
                     continue
 
     def _texts_to_vectors(self, tokenized_texts):
-        """Mean pooling of word vectors."""
-        vectors = np.zeros((len(tokenized_texts), self.dim))
+        """Enriched pooling: concatenate [mean, max, min, std] of word vectors."""
+        vectors = np.zeros((len(tokenized_texts), self.dim * 4))
         for i, tokens in enumerate(tokenized_texts):
             valid_vectors = [
                 self.word_vectors[t] for t in tokens if t in self.word_vectors
             ]
             if valid_vectors:
-                vectors[i] = np.mean(valid_vectors, axis=0)
+                vecs = np.array(valid_vectors)
+                vectors[i] = np.concatenate([
+                    np.mean(vecs, axis=0),
+                    np.max(vecs, axis=0),
+                    np.min(vecs, axis=0),
+                    np.std(vecs, axis=0),
+                ])
         return vectors
 
 
@@ -377,7 +455,7 @@ class FastTextExtractor(BaseExtractor):
     def __init__(
         self,
         pretrained_path: Optional[str] = None,
-        vector_size: int = 100,
+        vector_size: int = 200,
         train_from_scratch: bool = True,
     ):
         super().__init__(name="FastText")
@@ -406,10 +484,10 @@ class FastTextExtractor(BaseExtractor):
             self.model = GensimFastText(
                 sentences=train_tokenized,
                 vector_size=self.vector_size,
-                window=5,
+                window=7,
                 min_count=2,
                 workers=4,
-                epochs=20,
+                epochs=50,
                 min_n=3,  # minimum subword length
                 max_n=6,  # maximum subword length
             )
@@ -430,8 +508,8 @@ class FastTextExtractor(BaseExtractor):
         return vectors
 
     def _texts_to_vectors_gensim(self, tokenized_texts):
-        """Menggunakan model gensim FastText (mendukung OOV via subwords)."""
-        vectors = np.zeros((len(tokenized_texts), self.vector_size))
+        """Enriched pooling: concatenate [mean, max, min, std] via gensim FastText."""
+        vectors = np.zeros((len(tokenized_texts), self.vector_size * 4))
         for i, tokens in enumerate(tokenized_texts):
             valid_vectors = []
             for t in tokens:
@@ -440,7 +518,13 @@ class FastTextExtractor(BaseExtractor):
                 except KeyError:
                     continue
             if valid_vectors:
-                vectors[i] = np.mean(valid_vectors, axis=0)
+                vecs = np.array(valid_vectors)
+                vectors[i] = np.concatenate([
+                    np.mean(vecs, axis=0),
+                    np.max(vecs, axis=0),
+                    np.min(vecs, axis=0),
+                    np.std(vecs, axis=0),
+                ])
         return vectors
 
 
@@ -719,13 +803,10 @@ def get_all_extractors(subset: str = "priority") -> dict:
     """
     if subset == "priority":
         return {
-            "GloVe": GloVeExtractor(),
-            "FastText": FastTextExtractor(train_from_scratch=True),
-            "Word2Vec": Word2VecExtractor(train_from_scratch=True),
-            # "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
-            "IndoBERT": BERTExtractor(
-                model_name="indobenchmark/indobert-base-p1", pooling="cls"
-            ),
+            "TF-IDF": TFIDFExtractor(max_features=20000, ngram_range=(1, 2)),
+            "Word2Vec": Word2VecExtractor(vector_size=100, train_from_scratch=True),
+            "FastText": FastTextExtractor(vector_size=100, train_from_scratch=True),
+            "GloVe": GloVeExtractor(vectors_path="../data/embeddings/cc.id.300.vec"),
         }
     else:
         return {
