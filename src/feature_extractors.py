@@ -801,19 +801,22 @@ def get_all_extractors(subset: str = "priority") -> dict:
     Returns:
         Dict[str, BaseExtractor]
     """
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    glove_path = os.path.join(base_dir, "data", "embeddings", "cc.id.300.vec")
+
     if subset == "priority":
         return {
             "TF-IDF": TFIDFExtractor(max_features=20000, ngram_range=(1, 2)),
             "Word2Vec": Word2VecExtractor(vector_size=100, train_from_scratch=True),
             "FastText": FastTextExtractor(vector_size=100, train_from_scratch=True),
-            "GloVe": GloVeExtractor(vectors_path="../data/embeddings/cc.id.300.vec"),
+            "GloVe": GloVeExtractor(vectors_path=glove_path),
         }
     else:
         return {
             "TF-IDF": TFIDFExtractor(max_features=10000, ngram_range=(1, 2)),
             "BM25": BM25Extractor(),
             "Word2Vec": Word2VecExtractor(vector_size=100, train_from_scratch=True),
-            "GloVe": GloVeExtractor(vectors_path="../data/embeddings/cc.id.300.vec"),
+            "GloVe": GloVeExtractor(vectors_path=glove_path),
             "FastText": FastTextExtractor(vector_size=100, train_from_scratch=True),
             "DistilBERT": DistilBERTExtractor(),
             "IndoBERT": BERTExtractor(
