@@ -23,12 +23,12 @@ Peralihan dari Workflow lama ke baru bukan hanya sekadar penggantian model, mela
 Salah satu faktor kunci keberhasilan **Workflow Baru** adalah penyempurnaan pada pemilihan dan pembersihan dataset. Berikut adalah perbedaan mendasar antara kedua dataset yang digunakan:
 
 ### 📂 Dataset Workflow Lama (Baseline)
-- **Path:** [`data/processed/reviews_prepared.csv`](file:///home/titan/github/final-project-txmg1/data/processed/reviews_prepared.csv)
+- **Path:** [`data/processed/reviews_prepared.csv`](file://data/processed/reviews_prepared.csv)
 - **Cakupan Data:** Mengambil seluruh riwayat ulasan dari tahun **2021 hingga 2026**.
 - **Karakteristik:** Dataset ini masih mempertahankan rating **Netral (Rating 3)**. Keberadaan data netral ini terbukti menjadi "noise" yang signifikan karena ambiguitas kata yang tumpang tindih antara ulasan positif dan negatif, sehingga akurasi model sulit menembus angka 70%.
 
 ### 📂 Dataset Workflow Baru (Optimized)
-- **Path:** [`data/processed/reviews_prepared_new.csv`](file:///home/titan/github/final-project-txmg1/data/processed/reviews_prepared_new.csv)
+- **Path:** [`data/processed/reviews_prepared_new.csv`](file://data/processed/reviews_prepared_new.csv)
 - **Cakupan Data:** Difokuskan pada data **2 tahun terakhir (2024 - 2026)**.
 - **Karakteristik:** Dilakukan strategi **Drop Rating Netral (3)** untuk mempertajam perbedaan antara sentimen positif dan negatif. Selain itu, dataset ini telah diseimbangkan (balanced) agar model tidak bias terhadap satu kelas tertentu. Pemilihan data terbaru (2024-2026) juga memastikan model lebih relevan dengan kondisi aplikasi saat ini.
 
@@ -47,16 +47,16 @@ Perhatikan perbedaan distribusi skor F1 antara kedua workflow di bawah ini:
 
 #### A. Grouped Bar Chart (Performa Model)
 Komparasi performa setiap kombinasi Feature Extractor dan Model.
-![Grouped Bar F1 - Old](/home/titan/github/final-project-txmg1/results/figures/evaluation/grouped_bar_f1.png)
+![Grouped Bar F1 - Old](results/figures/evaluation/grouped_bar_f1.png)
 *Gambar 1: Workflow Lama - Mayoritas model tertahan di angka 60%.*
 
-![Grouped Bar F1 - New](/home/titan/github/final-project-txmg1/results/figures/evaluation/grouped_bar_f1_new.png)
+![Grouped Bar F1 - New](results/figures/evaluation/grouped_bar_f1_new.png)
 *Gambar 2: Workflow Baru - Peningkatan drastis, mayoritas model melampaui 85%.*
 
 #### B. Quadrant Analysis (F1 vs Time)
 Melihat efisiensi model (Akurasi vs Kecepatan Training).
-![Quadrant - Old](/home/titan/github/final-project-txmg1/results/figures/evaluation/quadrant_f1_vs_time.png)
-![Quadrant - New](/home/titan/github/final-project-txmg1/results/figures/evaluation/quadrant_f1_vs_time_new.png)
+![Quadrant - Old](results/figures/evaluation/quadrant_f1_vs_time.png)
+![Quadrant - New](results/figures/evaluation/quadrant_f1_vs_time_new.png)
 *Gambar 3 & 4: Workflow baru menunjukkan efisiensi tinggi pada Logistic Regression (F1 tinggi, waktu singkat).*
 
 ---
@@ -68,21 +68,21 @@ Selain akurasi, interpretasi terhadap apa yang dibicarakan pengguna juga mengala
 ### 🧠 Topic Modeling (LDA)
 Kami menggunakan metrik **Coherence Score** untuk menentukan jumlah topik optimal.
 ### Old Workflow
-![LDA Coherence - Old](/home/titan/github/final-project-txmg1/results/figures/interpretation/lda_coherence.png)
+![LDA Coherence - Old](results/figures/interpretation/lda_coherence.png)
 ### New Workflow
-![LDA Coherence - New](/home/titan/github/final-project-txmg1/results/figures/interpretation/lda_coherence_new.png)
+![LDA Coherence - New](results/figures/interpretation/lda_coherence_new.png)
 *Gambar 5 & 6: Workflow baru memberikan skor koherensi yang lebih stabil, memudahkan penentuan topik keluhan pengguna.*
 
 ### 🕒 Analisis Temporal & Sentimen Versi
 Melihat bagaimana sentimen berubah seiring waktu dan update versi aplikasi.
 
 #### Old Workflow (Ternary)
-![Sentiment by Version - Old](/home/titan/github/final-project-txmg1/results/figures/interpretation/sentiment_by_version.png)
-![Temporal Analysis - Old](/home/titan/github/final-project-txmg1/results/figures/interpretation/temporal_analysis.png)
+![Sentiment by Version - Old](results/figures/interpretation/sentiment_by_version.png)
+![Temporal Analysis - Old](results/figures/interpretation/temporal_analysis.png)
 
 #### New Workflow (Binary)
-![Sentiment by Version - New](/home/titan/github/final-project-txmg1/results/figures/interpretation/sentiment_by_version_new.png)
-![Temporal Analysis - New](/home/titan/github/final-project-txmg1/results/figures/interpretation/temporal_analysis_new.png)
+![Sentiment by Version - New](results/figures/interpretation/sentiment_by_version_new.png)
+![Temporal Analysis - New](results/figures/interpretation/temporal_analysis_new.png)
 
 *Gambar 7 - 10: Distribusi sentimen pada Workflow Baru memberikan gambaran yang lebih kontras dan jelas antara kepuasan dan keluhan pengguna dibandingkan workflow lama yang memiliki banyak noise dari kelas Netral.*
 
