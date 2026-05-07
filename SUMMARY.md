@@ -8,14 +8,14 @@ Peralihan dari Workflow lama ke baru bukan hanya sekadar penggantian model, mela
 
 ### 🔄 Perbandingan Teknis
 
-| Fitur                     | Workflow Lama (Baseline)     | Workflow Baru (Optimized)                |
-| :------------------------ | :--------------------------- | :--------------------------------------- |
-| **Notebooks**       | `01_eda_and_preparation.ipynb` - `05_comparison_analysis.ipynb`              | `01.1_eda_and_preparation.ipynb` - `05.5_comparison_analysis.ipynb`                      |
-| **Rentang Waktu**   | 2021 - 2026                  | **2024 - 2026** (2 Tahun Terakhir) |
-| **Labeling**        | 3 Kelas (Rating 1-5)         | **2 Kelas** (Rating 1-2 & 4-5)     |
-| **Noise Filtering** | Tanpa filter panjang ulasan  | **Minimal 3 Token**                |
-| **Preprocessing**   | Basic cleaning               | Advanced cleaning + Sastrawi Stemming    |
-| **Dataset State**   | Unbalanced (Dominan Negatif) | **Balanced** (Strategi Resampling) |
+| Fitur                     | Workflow Lama (Baseline)                                            | Workflow Baru (Optimized)                                               |
+| :------------------------ | :------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| **Notebooks**       | `01_eda_and_preparation.ipynb` - `05_comparison_analysis.ipynb` | `01.1_eda_and_preparation.ipynb` - `05.5_comparison_analysis.ipynb` |
+| **Rentang Waktu**   | 2021 - 2026                                                         | **2024 - 2026** (2 Tahun Terakhir)                                |
+| **Labeling**        | 3 Kelas (Rating 1-5)                                                | **2 Kelas** (Rating 1-2 & 4-5)                                    |
+| **Noise Filtering** | Tanpa filter panjang ulasan                                         | **Minimal 3 Token**                                               |
+| **Preprocessing**   | Basic cleaning                                                      | Advanced cleaning + Sastrawi Stemming                                   |
+| **Dataset State**   | Unbalanced (Dominan Negatif)                                        | **Balanced** (Strategi Resampling)                                |
 
 ---
 
@@ -33,7 +33,7 @@ Salah satu faktor kunci keberhasilan **Workflow Baru** adalah penyempurnaan pada
 
 - **Path:** [`data/processed/reviews_prepared_new.csv`](file://data/processed/reviews_prepared_new.csv)
 - **Cakupan Data:** Difokuskan pada data **2 tahun terakhir (2024 - 2026)**.
-- **Karakteristik:** Dilakukan strategi **Drop Rating Netral (3)** untuk mempertajam perbedaan antara sentimen positif dan negatif. Selain itu, dataset ini telah diseimbangkan (balanced) agar model tidak bias terhadap satu kelas tertentu. Pemilihan data terbaru (2024-2026) juga memastikan model lebih relevan dengan kondisi aplikasi saat ini.
+- **Karakteristik:** Dilakukan strategi **Drop Rating Netral (3)** u ntuk mempertajam perbedaan antara sentimen positif dan negatif. Selain itu, dataset ini telah diseimbangkan (balanced) agar model tidak bias terhadap satu kelas tertentu. Pemilihan data terbaru (2024-2026) juga memastikan model lebih relevan dengan kondisi aplikasi saat ini.
 
 ---
 
