@@ -52,19 +52,21 @@ Perhatikan perbedaan distribusi skor F1 antara kedua workflow di bawah ini:
 
 #### A. Grouped Bar Chart (Performa Model)
 
-Komparasi performa setiap kombinasi Feature Extractor dan Model.
+Grafik ini membandingkan skor **Weighted F1-Score** (keseimbangan antara ketepatan dan cakupan prediksi) untuk berbagai kombinasi teknik ekstraksi fitur dan model mesin pencari.
+
 ![Grouped Bar F1 - Old](results/figures/evaluation/grouped_bar_f1.png)
-*Gambar 1: Workflow Lama - Mayoritas model tertahan di angka 60%.*
+*Gambar 1: Workflow Lama - Anda dapat melihat bahwa sebagian besar batang grafik tertahan di bawah angka 0.7 (70%). Ini menunjukkan model kesulitan memberikan prediksi yang konsisten karena adanya data "Netral" yang membingungkan.*
 
 ![Grouped Bar F1 - New](results/figures/evaluation/grouped_bar_f1_new.png)
-*Gambar 2: Workflow Baru - Peningkatan drastis, mayoritas model melampaui 85%.*
+*Gambar 2: Workflow Baru - Terjadi lonjakan tinggi pada hampir seluruh model. Model terbaik (**TF-IDF + Logistic Regression**) mencapai angka 0.9 (90%), membuktikan bahwa pembersihan data dan fokus pada dua kategori (Positif/Negatif) membuat model jauh lebih cerdas.*
 
 #### B. Quadrant Analysis (F1 vs Time)
 
-Melihat efisiensi model (Akurasi vs Kecepatan Training).
+Analisis kuadran ini digunakan untuk mencari model yang tidak hanya akurat, tetapi juga efisien (cepat). Sumbu **Y (Vertikal)** menunjukkan Akurasi/F1, dan sumbu **X (Horizontal)** menunjukkan waktu training.
+
 ![Quadrant - Old](results/figures/evaluation/quadrant_f1_vs_time.png)
 ![Quadrant - New](results/figures/evaluation/quadrant_f1_vs_time_new.png)
-*Gambar 3 & 4: Workflow baru menunjukkan efisiensi tinggi pada Logistic Regression (F1 tinggi, waktu singkat).*
+*Gambar 3 & 4: Pada Workflow Baru, titik-titik model berkumpul di **Kuadran Kiri Atas (Sweet Spot)**. Artinya, model mampu memberikan hasil sangat akurat dengan waktu proses yang sangat singkat (di bawah 5 detik), terutama pada model Logistic Regression.*
 
 ---
 
@@ -74,32 +76,27 @@ Selain akurasi, interpretasi terhadap apa yang dibicarakan pengguna juga mengala
 
 ### 🧠 Topic Modeling (LDA)
 
-Kami menggunakan metrik **Coherence Score** untuk menentukan jumlah topik optimal.
-
-### Old Workflow
+Kami menggunakan teknik LDA untuk mengelompokkan kata-kata yang sering muncul bersama menjadi "Topik". Metrik **Coherence Score** digunakan untuk menentukan jumlah topik yang paling logis bagi manusia.
 
 ![LDA Coherence - Old](results/figures/interpretation/lda_coherence.png)
-
-### New Workflow
-
 ![LDA Coherence - New](results/figures/interpretation/lda_coherence_new.png)
-*Gambar 5 & 6: Workflow baru memberikan skor koherensi yang lebih stabil, memudahkan penentuan topik keluhan pengguna.*
+*Gambar 5 & 6: Grafik Coherence pada Workflow Baru menunjukkan tren yang lebih stabil dan tinggi dibandingkan versi lama. Ini berarti topik-topik yang ditemukan oleh AI (seperti masalah login, error sistem, atau pujian UI) menjadi lebih jelas dan tidak tumpang tindih.*
 
 ### 🕒 Analisis Temporal & Sentimen Versi
 
-Melihat bagaimana sentimen berubah seiring waktu dan update versi aplikasi.
+Analisis ini membantu tim pengembang melihat kapan sentimen negatif memuncak dan pada versi aplikasi mana masalah sering terjadi.
 
-#### Old Workflow (Ternary)
+#### Perbandingan Visual:
+- **Sentiment by Version:** Menunjukkan perbandingan jumlah sentimen untuk setiap update aplikasi.
+- **Temporal Analysis:** Menunjukkan fluktuasi emosi pengguna dari bulan ke bulan.
 
 ![Sentiment by Version - Old](results/figures/interpretation/sentiment_by_version.png)
 ![Temporal Analysis - Old](results/figures/interpretation/temporal_analysis.png)
-
-#### New Workflow (Binary)
+*Gambar 7 & 8: Pada Workflow Lama, kelas "Netral" (warna abu-abu) mendominasi dan menutupi tren asli, sehingga sulit menentukan apakah aplikasi sebenarnya membaik atau memburuk.*
 
 ![Sentiment by Version - New](results/figures/interpretation/sentiment_by_version_new.png)
 ![Temporal Analysis - New](results/figures/interpretation/temporal_analysis_new.png)
-
-*Gambar 7 - 10: Distribusi sentimen pada Workflow Baru memberikan gambaran yang lebih kontras dan jelas antara kepuasan dan keluhan pengguna dibandingkan workflow lama yang memiliki banyak noise dari kelas Netral.*
+*Gambar 9 & 10: Pada Workflow Baru, grafik menjadi sangat kontras (Hanya Biru/Positif dan Merah/Negatif). Kita dapat melihat dengan jelas titik-titik di mana sentimen negatif melonjak, yang biasanya bertepatan dengan adanya bug sistem pada tanggal tertentu.*
 
 ---
 
