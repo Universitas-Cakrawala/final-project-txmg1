@@ -151,6 +151,7 @@ Bagian ini menjelaskan dataset yang tersedia dan dataset yang benar-benar dipaka
 ### 5.1 Dataset mentah (Raw)
 
 - Lokasi: `./data/raw/coretax_reviews.csv`
+- Link Lokasi disini: [Link](https://github.com/Universitas-Cakrawala/final-project-txmg1/blob/main/data/raw/coretax_reviews.csv)
 - Jumlah baris: **8,102**
 - Rentang tanggal: **2021‑06‑04** s/d **2026‑05‑05**
 
@@ -181,6 +182,7 @@ Interpretasi awal:
 ### 5.2 Dataset final untuk Workflow Lama (Baseline / ternary)
 
 - Lokasi: `./data/processed/reviews_prepared.csv`
+- Link Lokasi disini: [Link](https://github.com/Universitas-Cakrawala/final-project-txmg1/blob/main/data/processed/reviews_prepared.csv)
 - Jumlah baris: **609**
 - Rentang tanggal: **2021‑06‑05** s/d **2026‑04‑30**
 - Distribusi sentimen (sudah seimbang): **203 Negatif, 203 Netral, 203 Positif**
@@ -204,6 +206,7 @@ Visualisasi yang tersedia:
 ### 5.3 Dataset final untuk Workflow Baru (Optimized / binary)
 
 - Lokasi: `./data/processed/reviews_prepared_new.csv`
+- Link Lokasi disini: [Link](https://github.com/Universitas-Cakrawala/final-project-txmg1/blob/main/data/processed/reviews_prepared_new.csv)
 - Jumlah baris: **1,646**
 - Rentang tanggal: **2024‑01‑02** s/d **2026‑05‑03**
 - Distribusi sentimen (seimbang): **823 Negatif, 823 Positif**
