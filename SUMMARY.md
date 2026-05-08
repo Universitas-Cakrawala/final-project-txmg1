@@ -54,9 +54,11 @@ Perhatikan perbedaan distribusi skor F1 antara kedua workflow di bawah ini:
 
 Grafik ini membandingkan skor **Weighted F1-Score** (keseimbangan antara ketepatan dan cakupan prediksi) untuk berbagai kombinasi teknik ekstraksi fitur dan model mesin pencari.
 
+##### **Before**
 ![Grouped Bar F1 - Old](results/figures/evaluation/grouped_bar_f1.png)
 *Gambar 1: Workflow Lama - Anda dapat melihat bahwa sebagian besar batang grafik tertahan di bawah angka 0.7 (70%). Ini menunjukkan model kesulitan memberikan prediksi yang konsisten karena adanya data "Netral" yang membingungkan.*
 
+##### **After**
 ![Grouped Bar F1 - New](results/figures/evaluation/grouped_bar_f1_new.png)
 *Gambar 2: Workflow Baru - Terjadi lonjakan tinggi pada hampir seluruh model. Model terbaik (**TF-IDF + Logistic Regression**) mencapai angka 0.9 (90%), membuktikan bahwa pembersihan data dan fokus pada dua kategori (Positif/Negatif) membuat model jauh lebih cerdas.*
 
@@ -64,7 +66,10 @@ Grafik ini membandingkan skor **Weighted F1-Score** (keseimbangan antara ketepat
 
 Analisis kuadran ini digunakan untuk mencari model yang tidak hanya akurat, tetapi juga efisien (cepat). Sumbu **Y (Vertikal)** menunjukkan Akurasi/F1, dan sumbu **X (Horizontal)** menunjukkan waktu training.
 
+##### **Before**
 ![Quadrant - Old](results/figures/evaluation/quadrant_f1_vs_time.png)
+
+##### **After**
 ![Quadrant - New](results/figures/evaluation/quadrant_f1_vs_time_new.png)
 *Gambar 3 & 4: Pada Workflow Baru, titik-titik model berkumpul di **Kuadran Kiri Atas (Sweet Spot)**. Artinya, model mampu memberikan hasil sangat akurat dengan waktu proses yang sangat singkat (di bawah 5 detik), terutama pada model Logistic Regression.*
 
@@ -78,7 +83,10 @@ Selain akurasi, interpretasi terhadap apa yang dibicarakan pengguna juga mengala
 
 Kami menggunakan teknik LDA untuk mengelompokkan kata-kata yang sering muncul bersama menjadi "Topik". Metrik **Coherence Score** digunakan untuk menentukan jumlah topik yang paling logis bagi manusia.
 
+##### **Before**
 ![LDA Coherence - Old](results/figures/interpretation/lda_coherence.png)
+
+##### **After**
 ![LDA Coherence - New](results/figures/interpretation/lda_coherence_new.png)
 *Gambar 5 & 6: Grafik Coherence pada Workflow Baru menunjukkan tren yang lebih stabil dan tinggi dibandingkan versi lama. Ini berarti topik-topik yang ditemukan oleh AI (seperti masalah login, error sistem, atau pujian UI) menjadi lebih jelas dan tidak tumpang tindih.*
 
@@ -90,10 +98,12 @@ Analisis ini membantu tim pengembang melihat kapan sentimen negatif memuncak dan
 - **Sentiment by Version:** Menunjukkan perbandingan jumlah sentimen untuk setiap update aplikasi.
 - **Temporal Analysis:** Menunjukkan fluktuasi emosi pengguna dari bulan ke bulan.
 
+##### **Before**
 ![Sentiment by Version - Old](results/figures/interpretation/sentiment_by_version.png)
 ![Temporal Analysis - Old](results/figures/interpretation/temporal_analysis.png)
 *Gambar 7 & 8: Pada Workflow Lama, kelas "Netral" (warna abu-abu) mendominasi dan menutupi tren asli, sehingga sulit menentukan apakah aplikasi sebenarnya membaik atau memburuk.*
 
+##### **After**
 ![Sentiment by Version - New](results/figures/interpretation/sentiment_by_version_new.png)
 ![Temporal Analysis - New](results/figures/interpretation/temporal_analysis_new.png)
 *Gambar 9 & 10: Pada Workflow Baru, grafik menjadi sangat kontras (Hanya Biru/Positif dan Merah/Negatif). Kita dapat melihat dengan jelas titik-titik di mana sentimen negatif melonjak, yang biasanya bertepatan dengan adanya bug sistem pada tanggal tertentu.*
