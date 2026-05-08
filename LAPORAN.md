@@ -150,7 +150,7 @@ Bagian ini menjelaskan dataset yang tersedia dan dataset yang benar-benar dipaka
 
 ### 5.1 Dataset mentah (Raw)
 
-- Lokasi: `../data/raw/coretax_reviews.csv`
+- Lokasi: `./data/raw/coretax_reviews.csv`
 - Jumlah baris: **8,102**
 - Rentang tanggal: **2021‑06‑04** s/d **2026‑05‑05**
 
@@ -167,12 +167,12 @@ Distribusi rating pada data mentah (sangat timpang):
 Visualisasi EDA (rating & volume review) tersedia di:
 
 **Before**
-![Distribusi Rating (Old)](../results/figures/eda/rating_distribution.png)
-![Tren Jumlah Review per Bulan (Old)](../results/figures/eda/monthly_trend.png)
+![Distribusi Rating (Old)](./results/figures/eda/rating_distribution.png)
+![Tren Jumlah Review per Bulan (Old)](./results/figures/eda/monthly_trend.png)
 
 **After**
-![Distribusi Rating (New)](../results/figures/eda/rating_distribution_new.png)
-![Tren Jumlah Review per Bulan (New)](../results/figures/eda/monthly_trend_new.png)
+![Distribusi Rating (New)](./results/figures/eda/rating_distribution_new.png)
+![Tren Jumlah Review per Bulan (New)](./results/figures/eda/monthly_trend_new.png)
 
 Interpretasi awal:
 - Rating 1 mendominasi, menunjukkan ketidakpuasan yang tinggi pada data mentah.
@@ -180,7 +180,7 @@ Interpretasi awal:
 
 ### 5.2 Dataset final untuk Workflow Lama (Baseline / ternary)
 
-- Lokasi: `../data/processed/reviews_prepared.csv`
+- Lokasi: `./data/processed/reviews_prepared.csv`
 - Jumlah baris: **609**
 - Rentang tanggal: **2021‑06‑05** s/d **2026‑04‑30**
 - Distribusi sentimen (sudah seimbang): **203 Negatif, 203 Netral, 203 Positif**
@@ -196,14 +196,14 @@ Kualitas preprocessing (indikator praktis):
 
 Visualisasi yang tersedia:
 
-![Distribusi Sentimen (Old)](../results/figures/eda/sentiment_distribution.png)
-![Distribusi Token Setelah Preprocessing (Old)](../results/figures/eda/token_distribution_after_preprocessing.png)
-![Wordcloud Raw (Old)](../results/figures/eda/wordcloud_raw.png)
-![Wordcloud Preprocessed (Old)](../results/figures/eda/wordcloud_preprocessed.png)
+![Distribusi Sentimen (Old)](./results/figures/eda/sentiment_distribution.png)
+![Distribusi Token Setelah Preprocessing (Old)](./results/figures/eda/token_distribution_after_preprocessing.png)
+![Wordcloud Raw (Old)](./results/figures/eda/wordcloud_raw.png)
+![Wordcloud Preprocessed (Old)](./results/figures/eda/wordcloud_preprocessed.png)
 
 ### 5.3 Dataset final untuk Workflow Baru (Optimized / binary)
 
-- Lokasi: `../data/processed/reviews_prepared_new.csv`
+- Lokasi: `./data/processed/reviews_prepared_new.csv`
 - Jumlah baris: **1,646**
 - Rentang tanggal: **2024‑01‑02** s/d **2026‑05‑03**
 - Distribusi sentimen (seimbang): **823 Negatif, 823 Positif**
@@ -221,10 +221,10 @@ Catatan penting tentang “noise filtering”:
 
 Visualisasi yang tersedia:
 
-![Distribusi Sentimen (New)](../results/figures/eda/sentiment_distribution_new.png)
-![Distribusi Token Setelah Preprocessing (New)](../results/figures/eda/token_distribution_after_preprocessing_new.png)
-![Wordcloud Raw (New)](../results/figures/eda/wordcloud_raw_new.png)
-![Wordcloud Preprocessed (New)](../results/figures/eda/wordcloud_preprocessed_new.png)
+![Distribusi Sentimen (New)](./results/figures/eda/sentiment_distribution_new.png)
+![Distribusi Token Setelah Preprocessing (New)](./results/figures/eda/token_distribution_after_preprocessing_new.png)
+![Wordcloud Raw (New)](./results/figures/eda/wordcloud_raw_new.png)
+![Wordcloud Preprocessed (New)](./results/figures/eda/wordcloud_preprocessed_new.png)
 
 ---
 
@@ -234,8 +234,8 @@ Bagian ini membandingkan hasil eksperimen model pada kedua workflow.
 
 ### 6.1 Artefak hasil yang digunakan
 
-- Tabel perbandingan Old: `../results/comparison_table.csv`
-- Tabel perbandingan New: `../results/comparison_table_new.csv`
+- Tabel perbandingan Old: `./results/comparison_table.csv`
+- Tabel perbandingan New: `./results/comparison_table_new.csv`
 
 Keduanya berisi 16 kombinasi (4 extractor × 4 model):
 
@@ -286,12 +286,12 @@ Lonjakan ini konsisten dengan ringkasan di `SUMMARY.md`:
 ### 6.4 Visualisasi evaluasi
 
 **Before**
-![Grouped Bar F1 (Old)](../results/figures/evaluation/grouped_bar_f1.png)
-![Quadrant F1 vs Time (Old)](../results/figures/evaluation/quadrant_f1_vs_time.png)
+![Grouped Bar F1 (Old)](./results/figures/evaluation/grouped_bar_f1.png)
+![Quadrant F1 vs Time (Old)](./results/figures/evaluation/quadrant_f1_vs_time.png)
 
 **After**
-![Grouped Bar F1 (New)](../results/figures/evaluation/grouped_bar_f1_new.png)
-![Quadrant F1 vs Time (New)](../results/figures/evaluation/quadrant_f1_vs_time_new.png)
+![Grouped Bar F1 (New)](./results/figures/evaluation/grouped_bar_f1_new.png)
+![Quadrant F1 vs Time (New)](./results/figures/evaluation/quadrant_f1_vs_time_new.png)
 
 Interpretasi utama:
 - Pada workflow lama, sebagian besar kombinasi tertahan di bawah ~0.7 karena masalah multi-class (khususnya Netral).
@@ -321,10 +321,10 @@ Tujuan bagian ini: menjawab *“isu apa yang paling dominan dikeluhkan pengguna?
 ### 7.1 Coherence-based topic selection (LDA)
 
 **Before**
-![LDA Coherence (Old)](../results/figures/interpretation/lda_coherence.png)
+![LDA Coherence (Old)](./results/figures/interpretation/lda_coherence.png)
 
 **After**
-![LDA Coherence (New)](../results/figures/interpretation/lda_coherence_new.png)
+![LDA Coherence (New)](./results/figures/interpretation/lda_coherence_new.png)
 
 Interpretasi ringkas:
 - Workflow lama cenderung menghasilkan topik yang lebih tumpang tindih karena kelas Netral dan sinyal campuran.
@@ -361,10 +361,10 @@ Bagian ini fokus pada *kapan* dan *di versi mana* isu memuncak.
 ### 8.1 Analisis temporal (rating & proporsi negatif)
 
 **Before**
-![Temporal Analysis (Old)](../results/figures/interpretation/temporal_analysis.png)
+![Temporal Analysis (Old)](./results/figures/interpretation/temporal_analysis.png)
 
 **After**
-![Temporal Analysis (New)](../results/figures/interpretation/temporal_analysis_new.png)
+![Temporal Analysis (New)](./results/figures/interpretation/temporal_analysis_new.png)
 
 Temuan data (workflow baru, proporsi negatif tertinggi dengan volume cukup):
 - **2024‑06**: ~76.3% negatif (n=59)
@@ -377,10 +377,10 @@ Interpretasi:
 ### 8.2 Distribusi sentimen per versi aplikasi
 
 **Before**
-![Sentiment by Version (Old)](../results/figures/interpretation/sentiment_by_version.png)
+![Sentiment by Version (Old)](./results/figures/interpretation/sentiment_by_version.png)
 
 **After**
-![Sentiment by Version (New)](../results/figures/interpretation/sentiment_by_version_new.png)
+![Sentiment by Version (New)](./results/figures/interpretation/sentiment_by_version_new.png)
 
 Temuan data (workflow baru, versi dengan negatif tinggi, n≥20):
 
